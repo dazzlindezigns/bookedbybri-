@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createSupabaseServerClient } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { CalendarDays, Clock, Star } from 'lucide-react'
 
 const STATUS_BADGE: Record<string, { label: string; class: string }> = {
@@ -55,11 +55,7 @@ export default async function AdminDashboard() {
     .select('*', { count: 'exact', head: true })
     .eq('status', 'pending')
 
-  const dateLabel = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  })
+  const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
   return (
     <div className="px-4 py-6">
@@ -86,19 +82,11 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-6">
-        <Link
-          href="/admin/availability"
-          className="flex items-center gap-2 bg-[#222] border border-[#3a3a3a] rounded-xl px-4 py-3 text-sm hover:border-[#ffabdd]/40 transition-colors"
-        >
-          <CalendarDays size={16} className="text-[#ffabdd]" />
-          Manage hours
+        <Link href="/admin/availability" className="flex items-center gap-2 bg-[#222] border border-[#3a3a3a] rounded-xl px-4 py-3 text-sm hover:border-[#ffabdd]/40 transition-colors">
+          <CalendarDays size={16} className="text-[#ffabdd]" />Manage hours
         </Link>
-        <Link
-          href="/admin/services"
-          className="flex items-center gap-2 bg-[#222] border border-[#3a3a3a] rounded-xl px-4 py-3 text-sm hover:border-[#ffabdd]/40 transition-colors"
-        >
-          <Star size={16} className="text-[#ffabdd]" />
-          Edit services
+        <Link href="/admin/services" className="flex items-center gap-2 bg-[#222] border border-[#3a3a3a] rounded-xl px-4 py-3 text-sm hover:border-[#ffabdd]/40 transition-colors">
+          <Star size={16} className="text-[#ffabdd]" />Edit services
         </Link>
       </div>
 
@@ -107,38 +95,22 @@ export default async function AdminDashboard() {
           <h2 className="font-semibold text-white">Today&apos;s Appointments</h2>
           <Link href="/admin/bookings" className="text-[#ffabdd] text-xs">View all</Link>
         </div>
-
         {todayBookings && todayBookings.length > 0 ? (
           <div className="space-y-2">
             {todayBookings.map((booking) => {
-              const badge = bookingActionBadge({
-                status: booking.status,
-                payment_status: booking.payment_status,
-                booking_images: booking.booking_images,
-              })
+              const badge = bookingActionBadge({ status: booking.status, payment_status: booking.payment_status, booking_images: booking.booking_images })
               return (
-                <Link
-                  key={booking.id}
-                  href={`/admin/bookings/${booking.id}`}
-                  className="flex items-center gap-3 bg-[#222] border border-[#3a3a3a] rounded-2xl p-4 hover:border-[#ffabdd]/40 transition-colors"
-                >
+                <Link key={booking.id} href={`/admin/bookings/${booking.id}`} className="flex items-center gap-3 bg-[#222] border border-[#3a3a3a] rounded-2xl p-4 hover:border-[#ffabdd]/40 transition-colors">
                   <div className="w-10 h-10 rounded-full bg-[#ffabdd]/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-[#ffabdd] text-sm font-semibold">{initials(booking.client_name)}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{booking.client_name}</p>
-                    <p className="text-white/50 text-xs truncate">
-                      {(booking.services as { name: string } | null)?.name}
-                    </p>
+                    <p className="text-white/50 text-xs truncate">{(booking.services as { name: string } | null)?.name}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-xs text-white/60 flex items-center gap-1">
-                      <Clock size={10} />
-                      {booking.appointment_time}
-                    </p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full mt-1 inline-block ${badge.class}`}>
-                      {badge.label}
-                    </span>
+                    <p className="text-xs text-white/60 flex items-center gap-1"><Clock size={10} />{booking.appointment_time}</p>
+                    <span className={`text-xs px-2 py-0.5 rounded-full mt-1 inline-block ${badge.class}`}>{badge.label}</span>
                   </div>
                 </Link>
               )

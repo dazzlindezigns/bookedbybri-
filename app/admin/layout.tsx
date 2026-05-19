@@ -1,12 +1,10 @@
 import { redirect } from 'next/navigation'
-import { createSupabaseServerClient } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import AdminNav from './AdminNav'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const sb = createSupabaseServerClient()
-  const {
-    data: { session },
-  } = await sb.auth.getSession()
+  const { data: { session } } = await sb.auth.getSession()
 
   if (!session) {
     redirect('/admin/login')
@@ -25,9 +23,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <span className="text-sm">🔔</span>
         </div>
       </header>
-
       <main className="pb-24">{children}</main>
-
       <AdminNav />
     </div>
   )
