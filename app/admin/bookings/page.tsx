@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createSupabaseServerClient } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 
 const FILTERS = ['all', 'pending', 'confirmed', 'completed', 'cancelled', 'declined'] as const
 type Filter = typeof FILTERS[number]

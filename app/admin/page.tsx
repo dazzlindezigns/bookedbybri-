@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createSupabaseServerClient } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { CalendarDays, Clock, Star } from 'lucide-react'
 
 const STATUS_BADGE: Record<string, { label: string; class: string }> = {

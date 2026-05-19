@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createSupabaseServerClient } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import BookingDetailClient from './BookingDetailClient'
 
 export default async function BookingDetailPage({ params }: { params: { id: string } }) {
