@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --pink: #ffabdd;
+  --pink-deep: #c4658f;
+  --pink-dark: #7a2e58;
+  --pink-light: #fff0f8;
+  --pink-border: #ffe0f2;
+  --gray: #8a8a8a;
+  --gray-light: #f2f2f0;
+  --gray-mid: #d4d4d0;
+  --gray-dark: #3a3a3a;
+  --black: #1a1a1a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--black);
+  color: white;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--pink);
+  color: var(--black);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--pink-deep);
+  border-radius: 3px;
+}
+
+@layer components {
+  .bri-name {
+    @apply font-cormorant italic text-[#ffabdd];
+  }
+
+  .btn-pink {
+    @apply bg-[#ffabdd] text-[#1a1a1a] font-semibold px-6 py-3 rounded-full hover:bg-[#c4658f] hover:text-white transition-all duration-200 active:scale-95;
+  }
+
+  .btn-dark {
+    @apply bg-[#1a1a1a] text-white font-semibold px-6 py-3 rounded-full border border-[#3a3a3a] hover:border-[#ffabdd] transition-all duration-200 active:scale-95;
+  }
+
+  .card {
+    @apply bg-[#222] border border-[#3a3a3a] rounded-2xl;
+  }
+
+  .input-field {
+    @apply w-full bg-[#2a2a2a] border border-[#3a3a3a] rounded-xl px-4 py-3 text-white placeholder-[#8a8a8a] focus:outline-none focus:border-[#ffabdd] transition-colors;
+  }
+}
