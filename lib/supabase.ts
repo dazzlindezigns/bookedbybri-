@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 export type Database = {
-  public: {
+  braids: {
     Tables: {
       services: {
         Row: {
@@ -16,8 +16,8 @@ export type Database = {
           display_order: number
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['services']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['services']['Insert']>
+        Insert: Omit<Database['braids']['Tables']['services']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['braids']['Tables']['services']['Insert']>
       }
       gallery_photos: {
         Row: {
@@ -28,8 +28,8 @@ export type Database = {
           active: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['gallery_photos']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['gallery_photos']['Insert']>
+        Insert: Omit<Database['braids']['Tables']['gallery_photos']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['braids']['Tables']['gallery_photos']['Insert']>
       }
       availability_blocks: {
         Row: {
@@ -42,8 +42,8 @@ export type Database = {
           note: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['availability_blocks']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['availability_blocks']['Insert']>
+        Insert: Omit<Database['braids']['Tables']['availability_blocks']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['braids']['Tables']['availability_blocks']['Insert']>
       }
       bookings: {
         Row: {
@@ -67,8 +67,8 @@ export type Database = {
           reminder_sent_at: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['bookings']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['bookings']['Insert']>
+        Insert: Omit<Database['braids']['Tables']['bookings']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['braids']['Tables']['bookings']['Insert']>
       }
       booking_images: {
         Row: {
@@ -78,8 +78,8 @@ export type Database = {
           file_name: string
           uploaded_at: string
         }
-        Insert: Omit<Database['public']['Tables']['booking_images']['Row'], 'id' | 'uploaded_at'>
-        Update: Partial<Database['public']['Tables']['booking_images']['Insert']>
+        Insert: Omit<Database['braids']['Tables']['booking_images']['Row'], 'id' | 'uploaded_at'>
+        Update: Partial<Database['braids']['Tables']['booking_images']['Insert']>
       }
       admin_settings: {
         Row: {
@@ -88,8 +88,8 @@ export type Database = {
           value: string
           updated_at: string
         }
-        Insert: Omit<Database['public']['Tables']['admin_settings']['Row'], 'id' | 'updated_at'>
-        Update: Partial<Database['public']['Tables']['admin_settings']['Insert']>
+        Insert: Omit<Database['braids']['Tables']['admin_settings']['Row'], 'id' | 'updated_at'>
+        Update: Partial<Database['braids']['Tables']['admin_settings']['Insert']>
       }
       policies: {
         Row: {
@@ -100,8 +100,8 @@ export type Database = {
           display_order: number
           active: boolean
         }
-        Insert: Omit<Database['public']['Tables']['policies']['Row'], 'id'>
-        Update: Partial<Database['public']['Tables']['policies']['Insert']>
+        Insert: Omit<Database['braids']['Tables']['policies']['Row'], 'id'>
+        Update: Partial<Database['braids']['Tables']['policies']['Insert']>
       }
       push_subscriptions: {
         Row: {
@@ -111,8 +111,8 @@ export type Database = {
           auth: string
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['push_subscriptions']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['push_subscriptions']['Insert']>
+        Insert: Omit<Database['braids']['Tables']['push_subscriptions']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['braids']['Tables']['push_subscriptions']['Insert']>
       }
     }
   }
@@ -121,10 +121,13 @@ export type Database = {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  db: { schema: 'braids' },
+})
 
 export function createSupabaseAdminClient() {
   return createClient<Database>(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    auth: { autoRefreshToken: false, persistSession: false }
+    db: { schema: 'braids' },
+    auth: { autoRefreshToken: false, persistSession: false },
   })
 }
