@@ -8,7 +8,6 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['your-project.supabase.co'],
     remotePatterns: [
       {
         protocol: 'https',
