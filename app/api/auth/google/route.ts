@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthUrl } from '@/lib/google'
 import { createSupabaseAdminClient } from '@/lib/supabase'

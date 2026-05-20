@@ -2,11 +2,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import BookingDetailClient from './BookingDetailClient'
+import type { BookingWithRelations } from '@/lib/supabase'
 
 export default async function BookingDetailPage({ params }: { params: { id: string } }) {
   const sb = createSupabaseServerClient()
-  const { data: booking } = await sb.from('bookings').select('*, services(*), booking_images(*)').eq('id', params.id).single()
-  if (!booking) notFound()
+  const { data: rawBooking } = await sb.from('bookings').select('*, services(*), booking_images(*)').eq('id', params.id).single()
+  if (!rawBooking) notFound()
+  const booking = rawBooking as unknown as BookingWithRelations
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
   return (
     <div className="px-4 py-6">

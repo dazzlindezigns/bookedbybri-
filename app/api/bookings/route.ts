@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase'
 import { sendGmail } from '@/lib/google'
@@ -14,7 +16,7 @@ export async function GET(req: NextRequest) {
     .select('*, services(name)')
     .order('appointment_date', { ascending: false })
 
-  if (status) query = query.eq('status', status)
+  if (status) query = query.eq('status', status as 'pending' | 'confirmed' | 'declined' | 'completed' | 'cancelled')
 
   const { data, error } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

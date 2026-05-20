@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { CalendarDays, Clock, Star } from 'lucide-react'
+import type { BookingRow, BookingImageRow } from '@/lib/supabase'
 
 const STATUS_BADGE: Record<string, { label: string; class: string }> = {
   pending: { label: 'Pending review', class: 'bg-amber-500/20 text-amber-400' },
@@ -36,12 +37,16 @@ export default async function AdminDashboard() {
   const today = new Date().toISOString().slice(0, 10)
   const weekEnd = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10)
 
-  const { data: todayBookings } = await sb
+  const { data: rawTodayBookings } = await sb
     .from('bookings')
     .select('*, services(name), booking_images(id)')
     .eq('appointment_date', today)
     .not('status', 'in', '("cancelled","declined")')
     .order('appointment_time')
+  const todayBookings = rawTodayBookings as unknown as (BookingRow & {
+    services: { name: string } | null
+    booking_images: Pick<BookingImageRow, 'id'>[]
+  })[]
 
   const { count: weekCount } = await sb
     .from('bookings')

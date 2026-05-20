@@ -20,6 +20,7 @@ type Booking = {
   final_price: number | null
   client_notes: string | null
   bri_notes: string | null
+  quote_message: string | null
   services: Service | null
   booking_images: BookingImage[]
 }

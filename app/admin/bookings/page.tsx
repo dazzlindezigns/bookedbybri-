@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
+import type { BookingRow } from '@/lib/supabase'
 
 const FILTERS = ['all', 'pending', 'confirmed', 'completed', 'cancelled', 'declined'] as const
 type Filter = typeof FILTERS[number]
@@ -22,7 +23,8 @@ export default async function BookingsPage({ searchParams }: { searchParams: { s
 
   let query = sb.from('bookings').select('*, services(name)').order('appointment_date', { ascending: false }).order('appointment_time', { ascending: true })
   if (filter !== 'all') query = query.eq('status', filter)
-  const { data: bookings } = await query
+  const { data: rawBookings } = await query
+  const bookings = rawBookings as unknown as (BookingRow & { services: { name: string } | null })[]
 
   return (
     <div className="px-4 py-6">

@@ -28,6 +28,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({ label,
     {error && <p className="text-xs text-red-400">{error}</p>}
   </div>
 ))
-Texarea.displayName = 'Textarea'
+Textarea.displayName = 'Textarea'
 
 export default Input
