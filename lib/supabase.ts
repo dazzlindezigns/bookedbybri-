@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { createBrowserClient } from '@supabase/ssr'
 
 export type Database = {
-  public: {
+  braids: {
     Tables: {
       services: {
         Row: {
@@ -28,7 +28,7 @@ export type Database = {
           active: boolean
           display_order: number
         }
-        Update: Partial<Database['public']['Tables']['services']['Insert']>
+        Update: Partial<Database['braids']['Tables']['services']['Insert']>
         Relationships: []
       }
       gallery_photos: {
@@ -47,7 +47,7 @@ export type Database = {
           display_order: number
           active: boolean
         }
-        Update: Partial<Database['public']['Tables']['gallery_photos']['Insert']>
+        Update: Partial<Database['braids']['Tables']['gallery_photos']['Insert']>
         Relationships: []
       }
       availability_blocks: {
@@ -70,7 +70,7 @@ export type Database = {
           is_available: boolean
           note?: string | null
         }
-        Update: Partial<Database['public']['Tables']['availability_blocks']['Insert']>
+        Update: Partial<Database['braids']['Tables']['availability_blocks']['Insert']>
         Relationships: []
       }
       bookings: {
@@ -115,7 +115,7 @@ export type Database = {
           confirmation_sent_at?: string | null
           reminder_sent_at?: string | null
         }
-        Update: Partial<Database['public']['Tables']['bookings']['Insert']>
+        Update: Partial<Database['braids']['Tables']['bookings']['Insert']>
         Relationships: [
           {
             foreignKeyName: "bookings_service_id_fkey"
@@ -140,7 +140,7 @@ export type Database = {
           storage_path: string
           file_name: string
         }
-        Update: Partial<Database['public']['Tables']['booking_images']['Insert']>
+        Update: Partial<Database['braids']['Tables']['booking_images']['Insert']>
         Relationships: [
           {
             foreignKeyName: "booking_images_booking_id_fkey"
@@ -163,7 +163,7 @@ export type Database = {
           key: string
           value: string
         }
-        Update: Partial<Database['public']['Tables']['admin_settings']['Insert']>
+        Update: Partial<Database['braids']['Tables']['admin_settings']['Insert']>
         Relationships: []
       }
       policies: {
@@ -183,7 +183,7 @@ export type Database = {
           display_order: number
           active: boolean
         }
-        Update: Partial<Database['public']['Tables']['policies']['Insert']>
+        Update: Partial<Database['braids']['Tables']['policies']['Insert']>
         Relationships: []
       }
       push_subscriptions: {
@@ -200,7 +200,7 @@ export type Database = {
           p256dh: string
           auth: string
         }
-        Update: Partial<Database['public']['Tables']['push_subscriptions']['Insert']>
+        Update: Partial<Database['braids']['Tables']['push_subscriptions']['Insert']>
         Relationships: []
       }
     }
@@ -212,14 +212,14 @@ export type Database = {
 }
 
 // Convenience type aliases for query results
-export type BookingRow = Database['public']['Tables']['bookings']['Row']
-export type ServiceRow = Database['public']['Tables']['services']['Row']
-export type BookingImageRow = Database['public']['Tables']['booking_images']['Row']
-export type GalleryPhotoRow = Database['public']['Tables']['gallery_photos']['Row']
-export type AdminSettingRow = Database['public']['Tables']['admin_settings']['Row']
-export type PolicyRow = Database['public']['Tables']['policies']['Row']
-export type PushSubscriptionRow = Database['public']['Tables']['push_subscriptions']['Row']
-export type AvailabilityBlockRow = Database['public']['Tables']['availability_blocks']['Row']
+export type BookingRow = Database['braids']['Tables']['bookings']['Row']
+export type ServiceRow = Database['braids']['Tables']['services']['Row']
+export type BookingImageRow = Database['braids']['Tables']['booking_images']['Row']
+export type GalleryPhotoRow = Database['braids']['Tables']['gallery_photos']['Row']
+export type AdminSettingRow = Database['braids']['Tables']['admin_settings']['Row']
+export type PolicyRow = Database['braids']['Tables']['policies']['Row']
+export type PushSubscriptionRow = Database['braids']['Tables']['push_subscriptions']['Row']
+export type AvailabilityBlockRow = Database['braids']['Tables']['availability_blocks']['Row']
 
 export type BookingWithRelations = BookingRow & {
   services: Pick<ServiceRow, 'id' | 'name' | 'base_price' | 'duration_minutes'> | null
@@ -229,7 +229,8 @@ export type BookingWithRelations = BookingRow & {
 export function createBrowserSupabaseClient() {
   return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { db: { schema: 'braids' } }
   )
 }
 
@@ -237,6 +238,6 @@ export function createSupabaseAdminClient() {
   return createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { autoRefreshToken: false, persistSession: false } }
+    { auth: { autoRefreshToken: false, persistSession: false }, db: { schema: 'braids' } }
   )
 }
