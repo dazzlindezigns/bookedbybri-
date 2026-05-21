@@ -82,14 +82,8 @@ export default async function HomePage() {
       {/* Sticky top nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-[#1a1a1a]/80 backdrop-blur-md border-b border-white/5">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 relative bg-white rounded-full overflow-hidden">
-            <Image
-              src="/logo.png"
-              alt="Braids by Brizee Bri"
-              fill
-              className="object-contain p-1"
-              priority
-            />
+          <div className="w-8 h-8 bg-white rounded-full overflow-hidden flex items-center justify-center">
+            <span className="font-cormorant italic text-[#ffabdd] font-bold text-base leading-none">B</span>
           </div>
           <span className="text-white text-xs font-semibold leading-tight hidden sm:block">
             Braids by Brizee Bri
@@ -107,7 +101,6 @@ export default async function HomePage() {
       <section className="relative min-h-screen bg-[#1a1a1a] flex flex-col items-center justify-center px-4 pt-20 pb-16">
         <div className="flex flex-col items-center gap-6 text-center">
           <div
-            className="relative flex-shrink-0"
             style={{
               width: 170,
               height: 170,
@@ -115,14 +108,18 @@ export default async function HomePage() {
               background: 'white',
               boxShadow: '0 0 0 4px #ffabdd, 0 0 32px 8px rgba(255,171,221,0.35)',
               overflow: 'hidden',
-              padding: 8,
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <Image
               src="/logo.png"
               alt="Braids by Brizee Bri Logo"
-              fill
-              className="object-contain p-2"
+              width={154}
+              height={154}
+              className="object-contain"
               priority
             />
           </div>

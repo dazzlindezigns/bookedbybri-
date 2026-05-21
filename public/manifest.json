@@ -4,10 +4,9 @@
   "description": "Book your braiding appointment with Brizee Bri in Pflugerville, TX",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
+  "background_color": "#f7f5f3",
   "theme_color": "#ffabdd",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/logo.png", "sizes": "any", "type": "image/png", "purpose": "any maskable" }
   ]
 }

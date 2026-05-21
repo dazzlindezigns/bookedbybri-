@@ -41,13 +41,17 @@ export default function BookPage() {
   const [depositAmount, setDepositAmount] = useState(50)
 
   useEffect(() => {
-    fetch('/api/services').then((r) => r.json()).then(setServices)
-    fetch('/api/settings').then((r) => r.json()).then((data) => {
-      setSettings(data)
-      const depositType = data.deposit_type || 'flat'
-      const depositValue = parseFloat(data.deposit_value || '50')
-      if (depositType === 'flat') setDepositAmount(depositValue)
-    })
+    fetch('/api/services')
+      .then((r) => r.ok ? r.json() : [])
+      .then((data) => setServices(Array.isArray(data) ? data : []))
+    fetch('/api/settings')
+      .then((r) => r.ok ? r.json() : {})
+      .then((data: Record<string, string>) => {
+        setSettings(data || {})
+        const depositType = data?.deposit_type || 'flat'
+        const depositValue = parseFloat(data?.deposit_value || '50')
+        if (depositType === 'flat') setDepositAmount(depositValue)
+      })
   }, [])
 
   useEffect(() => {
