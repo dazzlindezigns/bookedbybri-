@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 
 export type Database = {
   public: {
@@ -226,7 +227,7 @@ export type BookingWithRelations = BookingRow & {
 }
 
 export function createBrowserSupabaseClient() {
-  return createClient<Database>(
+  return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )

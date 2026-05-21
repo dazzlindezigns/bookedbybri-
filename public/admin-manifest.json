@@ -1,0 +1,13 @@
+{
+  "name": "BookedByBri Admin",
+  "short_name": "Bri Admin",
+  "description": "Admin dashboard for Braids by Brizee Bri",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#ffabdd",
+  "icons": [
+    { "src": "/logo.png", "sizes": "any", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
