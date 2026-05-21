@@ -122,7 +122,7 @@ export default function BookingDetailClient({
     <div className="space-y-5">
       {booking.booking_images?.length > 0 && (
         <div>
-          <p className="text-xs text-white/50 uppercase tracking-wider mb-3">Style Inspiration</p>
+          <p className="text-xs text-[#8a7f7a] uppercase tracking-wider mb-3">Style Inspiration</p>
           <div className="flex gap-2 overflow-x-auto pb-2">
             {booking.booking_images.map((img) => (
               <div key={img.id} className="relative flex-shrink-0 w-28 h-28 rounded-xl overflow-hidden">
@@ -138,17 +138,17 @@ export default function BookingDetailClient({
         </div>
       )}
 
-      <div className="bg-[#222] border border-[#3a3a3a] rounded-2xl p-4 space-y-3 text-sm">
-        <p className="text-xs text-white/50 uppercase tracking-wider">Booking Summary</p>
-        <div className="flex justify-between"><span className="text-white/60">Client</span><span className="font-medium">{booking.client_name}</span></div>
-        <div className="flex justify-between"><span className="text-white/60">Email</span><span className="text-white/80">{booking.client_email}</span></div>
-        <div className="flex justify-between"><span className="text-white/60">Phone</span><span className="text-white/80">{booking.client_phone}</span></div>
-        <div className="flex justify-between"><span className="text-white/60">Service</span><span className="font-medium">{booking.services?.name}</span></div>
-        <div className="flex justify-between"><span className="text-white/60">Date</span><span>{formattedDate}</span></div>
-        <div className="flex justify-between"><span className="text-white/60">Time</span><span>{booking.appointment_time}</span></div>
+      <div className="bg-white border border-[#ede9e5] rounded-2xl p-4 space-y-3 text-sm">
+        <p className="text-xs text-[#8a7f7a] uppercase tracking-wider">Booking Summary</p>
+        <div className="flex justify-between"><span className="text-[#8a7f7a]">Client</span><span className="font-medium text-[#1a1a1a]">{booking.client_name}</span></div>
+        <div className="flex justify-between"><span className="text-[#8a7f7a]">Email</span><span className="text-[#1a1a1a]">{booking.client_email}</span></div>
+        <div className="flex justify-between"><span className="text-[#8a7f7a]">Phone</span><span className="text-[#1a1a1a]">{booking.client_phone}</span></div>
+        <div className="flex justify-between"><span className="text-[#8a7f7a]">Service</span><span className="font-medium text-[#1a1a1a]">{booking.services?.name}</span></div>
+        <div className="flex justify-between"><span className="text-[#8a7f7a]">Date</span><span className="text-[#1a1a1a]">{formattedDate}</span></div>
+        <div className="flex justify-between"><span className="text-[#8a7f7a]">Time</span><span className="text-[#1a1a1a]">{booking.appointment_time}</span></div>
         <div className="flex justify-between">
-          <span className="text-white/60">Deposit</span>
-          <span className="font-semibold text-[#ffabdd]">
+          <span className="text-[#8a7f7a]">Deposit</span>
+          <span className="font-semibold text-[#c4658f]">
             ${booking.deposit_amount.toFixed(2)} via {booking.payment_method}
           </span>
         </div>
@@ -156,25 +156,25 @@ export default function BookingDetailClient({
           <button
             onClick={handleMarkPaid}
             disabled={submitting}
-            className="w-full mt-2 py-2 rounded-xl border border-amber-500/40 text-amber-400 text-xs hover:bg-amber-500/10 transition-colors"
+            className="w-full mt-2 py-2 rounded-xl border border-amber-300 text-amber-600 text-xs hover:bg-amber-50 transition-colors"
           >
             Mark deposit as paid
           </button>
         )}
         {booking.client_notes && (
           <div>
-            <p className="text-white/60 text-xs mb-1">Client notes</p>
-            <p className="text-white/80 text-sm bg-[#1a1a1a] rounded-lg p-3">{booking.client_notes}</p>
+            <p className="text-[#8a7f7a] text-xs mb-1">Client notes</p>
+            <p className="text-[#1a1a1a] text-sm bg-[#f7f5f3] rounded-lg p-3">{booking.client_notes}</p>
           </div>
         )}
       </div>
 
       {!['declined', 'completed', 'cancelled'].includes(booking.status) && (
-        <div className="border border-[#ffabdd]/40 bg-[#ffabdd]/5 rounded-2xl p-4 space-y-4">
-          <p className="font-semibold text-sm">✦ Set your final price</p>
+        <div className="border border-[#ffabdd]/40 bg-[#fff0f8] rounded-2xl p-4 space-y-4">
+          <p className="font-semibold text-sm text-[#1a1a1a]">✦ Set your final price</p>
 
           <div>
-            <label className="text-xs text-white/60 block mb-1.5">Final total price ($)</label>
+            <label className="text-xs text-[#8a7f7a] block mb-1.5">Final total price ($)</label>
             <input
               type="number"
               min="0"
@@ -187,20 +187,20 @@ export default function BookingDetailClient({
           </div>
 
           <div className="text-sm space-y-2">
-            <div className="flex justify-between text-white/60">
+            <div className="flex justify-between text-[#8a7f7a]">
               <span>Deposit paid</span>
-              <span className="text-white">${booking.deposit_amount.toFixed(2)}</span>
+              <span className="text-[#1a1a1a]">${booking.deposit_amount.toFixed(2)}</span>
             </div>
             {balanceDue !== null && (
-              <div className="flex justify-between font-semibold border-t border-[#3a3a3a] pt-2">
-                <span>Balance due at appointment</span>
-                <span className="text-[#ffabdd]">${balanceDue.toFixed(2)}</span>
+              <div className="flex justify-between font-semibold border-t border-[#ede9e5] pt-2">
+                <span className="text-[#1a1a1a]">Balance due at appointment</span>
+                <span className="text-[#c4658f]">${balanceDue.toFixed(2)}</span>
               </div>
             )}
           </div>
 
           <div>
-            <label className="text-xs text-white/60 block mb-1.5">Message to client</label>
+            <label className="text-xs text-[#8a7f7a] block mb-1.5">Message to client</label>
             <textarea
               className="input-field min-h-[100px] resize-none text-sm"
               value={message}
@@ -209,11 +209,11 @@ export default function BookingDetailClient({
           </div>
 
           {error && (
-            <p className="text-red-400 text-xs bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">{error}</p>
+            <p className="text-red-500 text-xs bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
           )}
 
           {success ? (
-            <div className="py-3 rounded-xl bg-green-500/20 border border-green-500/30 text-green-400 text-sm text-center font-medium">
+            <div className="py-3 rounded-xl bg-green-50 border border-green-200 text-green-600 text-sm text-center font-medium">
               ✓ Quote sent to {booking.client_email}
             </div>
           ) : (
@@ -221,14 +221,14 @@ export default function BookingDetailClient({
               <button
                 onClick={() => setShowDecline(true)}
                 disabled={submitting}
-                className="flex-1 py-3 rounded-full border border-[#3a3a3a] text-white/60 text-sm hover:border-red-500/40 hover:text-red-400 transition-colors"
+                className="flex-1 py-3 rounded-full border border-[#ede9e5] text-[#8a7f7a] text-sm hover:border-red-300 hover:text-red-500 transition-colors bg-white"
               >
                 Decline
               </button>
               <button
                 onClick={handleSendQuote}
                 disabled={submitting || !finalPrice}
-                className="flex-1 py-3 rounded-full bg-[#1a1a1a] border border-[#ffabdd] text-white text-sm font-semibold hover:bg-[#ffabdd] hover:text-[#1a1a1a] transition-all disabled:opacity-40"
+                className="flex-1 py-3 rounded-full bg-[#1a1a1a] text-white text-sm font-semibold hover:bg-[#ffabdd] hover:text-[#1a1a1a] transition-all disabled:opacity-40"
               >
                 {submitting ? 'Sending...' : 'Send quote →'}
               </button>
@@ -238,14 +238,14 @@ export default function BookingDetailClient({
       )}
 
       {showDecline && (
-        <div className="fixed inset-0 bg-black/80 flex items-end z-50 p-4" onClick={() => setShowDecline(false)}>
+        <div className="fixed inset-0 bg-black/50 flex items-end z-50 p-4" onClick={() => setShowDecline(false)}>
           <div
-            className="w-full max-w-sm mx-auto bg-[#222] rounded-2xl p-5 space-y-4"
+            className="w-full max-w-sm mx-auto bg-white rounded-2xl p-5 space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="font-semibold">Decline this booking</p>
+            <p className="font-semibold text-[#1a1a1a]">Decline this booking</p>
             <div>
-              <label className="text-xs text-white/60 block mb-1.5">Reason (sent to client)</label>
+              <label className="text-xs text-[#8a7f7a] block mb-1.5">Reason (sent to client)</label>
               <textarea
                 className="input-field resize-none min-h-[80px]"
                 placeholder="e.g. Unfortunately I'm unable to take this appointment at this time."
@@ -254,11 +254,11 @@ export default function BookingDetailClient({
               />
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setShowDecline(false)} className="flex-1 py-3 rounded-full border border-[#3a3a3a] text-sm">Cancel</button>
+              <button onClick={() => setShowDecline(false)} className="flex-1 py-3 rounded-full border border-[#ede9e5] text-sm text-[#1a1a1a]">Cancel</button>
               <button
                 onClick={handleDecline}
                 disabled={submitting}
-                className="flex-1 py-3 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-sm font-semibold"
+                className="flex-1 py-3 rounded-full bg-red-50 border border-red-200 text-red-500 text-sm font-semibold"
               >
                 Confirm decline
               </button>

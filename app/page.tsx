@@ -78,20 +78,20 @@ export default async function HomePage() {
   const extraCount = gallery.length > 6 ? gallery.length - 6 : 0
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] text-white font-sans">
+    <div className="min-h-screen font-sans">
       {/* Sticky top nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-black/70 backdrop-blur-md border-b border-white/5">
-        <div className="bg-white rounded-full px-3 py-1.5 flex items-center gap-2 shadow-lg">
-          <div className="w-8 h-8 relative">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-[#1a1a1a]/80 backdrop-blur-md border-b border-white/5">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 relative bg-white rounded-full overflow-hidden">
             <Image
               src="/logo.png"
               alt="Braids by Brizee Bri"
               fill
-              className="object-contain rounded-full"
+              className="object-contain p-1"
               priority
             />
           </div>
-          <span className="text-[#1a1a1a] text-xs font-semibold leading-tight hidden sm:block">
+          <span className="text-white text-xs font-semibold leading-tight hidden sm:block">
             Braids by Brizee Bri
           </span>
         </div>
@@ -103,7 +103,7 @@ export default async function HomePage() {
         </Link>
       </nav>
 
-      {/* Hero */}
+      {/* Hero — dark atmospheric */}
       <section className="relative min-h-screen bg-[#1a1a1a] flex flex-col items-center justify-center px-4 pt-20 pb-16">
         <div className="flex flex-col items-center gap-6 text-center">
           <div
@@ -140,20 +140,27 @@ export default async function HomePage() {
             <MapPin size={14} className="text-[#ffabdd]" />
             <span>{location}</span>
           </div>
+
+          <Link
+            href="/book"
+            className="mt-2 bg-[#ffabdd] text-[#1a1a1a] font-semibold px-8 py-3.5 rounded-full hover:bg-[#c4658f] hover:text-white transition-all duration-200 active:scale-95 shadow-lg shadow-[#ffabdd]/20"
+          >
+            Book an Appointment
+          </Link>
         </div>
       </section>
 
-      {/* Bio */}
-      <section className="bg-[#111] px-6 py-16 max-w-2xl mx-auto">
-        <h2 className="font-cormorant text-4xl font-semibold text-white mb-6 text-center">
+      {/* Bio — cream */}
+      <section className="bg-[#f7f5f3] px-6 py-16 max-w-2xl mx-auto">
+        <h2 className="font-cormorant text-4xl font-semibold text-[#1a1a1a] mb-6 text-center">
           Your Hair, Your Crown
         </h2>
-        <p className="text-white/70 leading-relaxed text-center mb-8">{bio}</p>
+        <p className="text-[#6b6460] leading-relaxed text-center mb-8">{bio}</p>
         <div className="flex flex-wrap gap-2 justify-center">
           {STYLE_TAGS.map((tag) => (
             <span
               key={tag}
-              className="px-3 py-1.5 rounded-full text-sm border border-[#ffabdd]/40 text-[#ffabdd] bg-[#ffabdd]/5"
+              className="px-3 py-1.5 rounded-full text-sm border border-[#ffabdd]/50 text-[#c4658f] bg-[#fff0f8]"
             >
               {tag}
             </span>
@@ -161,16 +168,16 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Gallery */}
-      <section className="px-4 py-16 max-w-2xl mx-auto">
-        <h2 className="font-cormorant text-4xl font-semibold text-white mb-8 text-center">
+      {/* Gallery — white */}
+      <section className="bg-white px-4 py-16 max-w-2xl mx-auto">
+        <h2 className="font-cormorant text-4xl font-semibold text-[#1a1a1a] mb-8 text-center">
           Fresh out the chair ✦
         </h2>
 
         {visiblePhotos.length > 0 ? (
           <div className="grid grid-cols-3 gap-1.5 mb-6">
             {visiblePhotos.map((photo) => (
-              <div key={photo.id} className="relative aspect-square rounded-lg overflow-hidden bg-[#2a2a2a]">
+              <div key={photo.id} className="relative aspect-square rounded-lg overflow-hidden bg-[#f7f5f3]">
                 <Image
                   src={photoUrl(photo.storage_path)}
                   alt={photo.caption || 'Brizee Bri style'}
@@ -180,15 +187,15 @@ export default async function HomePage() {
               </div>
             ))}
             {extraCount > 0 && (
-              <div className="relative aspect-square rounded-lg overflow-hidden bg-[#2a2a2a] flex items-center justify-center">
-                <span className="text-white font-semibold text-lg">+{extraCount} more</span>
+              <div className="relative aspect-square rounded-lg overflow-hidden bg-[#fff0f8] flex items-center justify-center">
+                <span className="text-[#c4658f] font-semibold text-lg">+{extraCount} more</span>
               </div>
             )}
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-1.5 mb-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="aspect-square rounded-lg bg-[#2a2a2a] animate-pulse" />
+              <div key={i} className="aspect-square rounded-lg bg-[#f7f5f3] animate-pulse" />
             ))}
           </div>
         )}
@@ -197,59 +204,59 @@ export default async function HomePage() {
           href={`https://instagram.com/${instagram.replace('@', '')}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-between bg-black border border-[#3a3a3a] rounded-2xl px-5 py-4 hover:border-[#ffabdd]/50 transition-colors"
+          className="flex items-center justify-between bg-[#f7f5f3] border border-[#ede9e5] rounded-2xl px-5 py-4 hover:border-[#ffabdd]/60 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <Instagram size={20} className="text-[#ffabdd]" />
+            <Instagram size={20} className="text-[#c4658f]" />
             <div>
-              <p className="font-semibold text-sm">Tag us on Instagram</p>
-              <p className="text-white/50 text-xs">{instagram}</p>
+              <p className="font-semibold text-sm text-[#1a1a1a]">Tag us on Instagram</p>
+              <p className="text-[#8a7f7a] text-xs">{instagram}</p>
             </div>
           </div>
-          <span className="text-white/40 text-xs">→</span>
+          <span className="text-[#b0a8a4] text-xs">→</span>
         </a>
       </section>
 
       {/* Social chips */}
-      <section className="flex justify-center gap-3 px-4 pb-8">
+      <section className="bg-[#f7f5f3] flex justify-center gap-3 px-4 pb-8">
         <a
           href={`https://instagram.com/${instagram.replace('@', '')}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#2a2a2a] border border-[#3a3a3a] text-sm hover:border-[#ffabdd]/50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#ede9e5] text-sm text-[#1a1a1a] hover:border-[#ffabdd]/60 transition-colors"
         >
-          <Instagram size={14} className="text-[#ffabdd]" />
+          <Instagram size={14} className="text-[#c4658f]" />
           {instagram}
         </a>
         <a
           href={`https://facebook.com/${facebook.replace('@', '')}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#2a2a2a] border border-[#3a3a3a] text-sm hover:border-[#ffabdd]/50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#ede9e5] text-sm text-[#1a1a1a] hover:border-[#ffabdd]/60 transition-colors"
         >
-          <Facebook size={14} className="text-[#ffabdd]" />
+          <Facebook size={14} className="text-[#c4658f]" />
           {facebook}
         </a>
       </section>
 
       {/* Policies accordion */}
       {policies.length > 0 && (
-        <section className="px-4 pb-24 max-w-2xl mx-auto">
-          <details className="group border border-[#3a3a3a] rounded-2xl overflow-hidden">
-            <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none select-none hover:bg-white/5 transition-colors">
-              <div className="flex items-center gap-2 text-sm font-medium text-white/80">
-                <Clipboard size={15} className="text-[#ffabdd]" />
+        <section className="bg-[#f7f5f3] px-4 pb-24 max-w-2xl mx-auto">
+          <details className="group bg-white border border-[#ede9e5] rounded-2xl overflow-hidden">
+            <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none select-none hover:bg-[#f7f5f3] transition-colors">
+              <div className="flex items-center gap-2 text-sm font-medium text-[#1a1a1a]">
+                <Clipboard size={15} className="text-[#c4658f]" />
                 Booking policies
               </div>
-              <span className="text-white/40 text-xs group-open:rotate-180 transition-transform">▼</span>
+              <span className="text-[#b0a8a4] text-xs group-open:rotate-180 transition-transform">▼</span>
             </summary>
-            <div className="px-5 pb-5 pt-2 border-t border-[#3a3a3a] space-y-4">
+            <div className="px-5 pb-5 pt-2 border-t border-[#ede9e5] space-y-4">
               {policies.map((policy) => (
                 <div key={policy.id}>
-                  <p className="font-semibold text-sm text-white">
+                  <p className="font-semibold text-sm text-[#1a1a1a]">
                     {policy.icon} {policy.title}
                   </p>
-                  <p className="text-white/60 text-sm mt-0.5">{policy.body}</p>
+                  <p className="text-[#8a7f7a] text-sm mt-0.5">{policy.body}</p>
                 </div>
               ))}
             </div>
@@ -258,11 +265,11 @@ export default async function HomePage() {
       )}
 
       {/* Sticky bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-black via-black/90 to-transparent pointer-events-none">
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-[#f7f5f3] via-[#f7f5f3]/90 to-transparent pointer-events-none">
         <div className="pointer-events-auto max-w-sm mx-auto">
           <Link
             href="/book"
-            className="flex items-center justify-center gap-2 w-full bg-[#1a1a1a] border border-[#3a3a3a] text-white font-semibold py-4 rounded-full hover:border-[#ffabdd] hover:bg-[#ffabdd]/10 transition-all duration-200 active:scale-95 shadow-2xl"
+            className="flex items-center justify-center gap-2 w-full bg-[#1a1a1a] text-white font-semibold py-4 rounded-full hover:bg-[#ffabdd] hover:text-[#1a1a1a] transition-all duration-200 active:scale-95 shadow-lg"
           >
             ✦ Book an appointment
           </Link>

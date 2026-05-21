@@ -74,22 +74,22 @@ export default function AvailabilityPage() {
 
   return (
     <div className="px-4 py-6">
-      <h1 className="font-cormorant text-3xl font-semibold mb-6">Availability</h1>
+      <h1 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-6">Availability</h1>
 
       <div className="space-y-2 mb-6">
         {DAYS.map((day, dow) => (
-          <div key={day} className="bg-[#222] border border-[#3a3a3a] rounded-2xl p-4">
+          <div key={day} className="bg-white border border-[#ede9e5] rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
-              <span className="font-medium text-sm">{day}</span>
+              <span className="font-medium text-sm text-[#1a1a1a]">{day}</span>
               <button
                 onClick={() => setSchedule((prev) => {
                   const next = [...prev]
                   next[dow] = { ...next[dow], enabled: !next[dow].enabled }
                   return next
                 })}
-                className={`relative w-11 h-6 rounded-full transition-colors ${schedule[dow].enabled ? 'bg-[#ffabdd]' : 'bg-[#3a3a3a]'}`}
+                className={`relative w-11 h-6 rounded-full transition-colors ${schedule[dow].enabled ? 'bg-[#ffabdd]' : 'bg-[#ede9e5]'}`}
               >
-                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${schedule[dow].enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${schedule[dow].enabled ? 'translate-x-6' : 'translate-x-1'}`} />
               </button>
             </div>
             {schedule[dow].enabled && (
@@ -102,9 +102,9 @@ export default function AvailabilityPage() {
                     next[dow] = { ...next[dow], start_time: e.target.value }
                     return next
                   })}
-                  className="flex-1 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#ffabdd]"
+                  className="flex-1 bg-[#f7f5f3] border border-[#ede9e5] rounded-lg px-3 py-2 text-[#1a1a1a] focus:outline-none focus:border-[#ffabdd]"
                 />
-                <span className="text-white/40">to</span>
+                <span className="text-[#b0a8a4]">to</span>
                 <input
                   type="time"
                   value={schedule[dow].end_time}
@@ -113,7 +113,7 @@ export default function AvailabilityPage() {
                     next[dow] = { ...next[dow], end_time: e.target.value }
                     return next
                   })}
-                  className="flex-1 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#ffabdd]"
+                  className="flex-1 bg-[#f7f5f3] border border-[#ede9e5] rounded-lg px-3 py-2 text-[#1a1a1a] focus:outline-none focus:border-[#ffabdd]"
                 />
               </div>
             )}
@@ -123,15 +123,15 @@ export default function AvailabilityPage() {
 
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <p className="font-semibold text-sm">Blocked Dates</p>
-          <button onClick={addSpecificBlock} className="flex items-center gap-1 text-[#ffabdd] text-xs hover:underline">
+          <p className="font-semibold text-sm text-[#1a1a1a]">Blocked Dates</p>
+          <button onClick={addSpecificBlock} className="flex items-center gap-1 text-[#c4658f] text-xs hover:underline">
             <Plus size={13} /> Add date
           </button>
         </div>
         {specificBlocks.length > 0 ? (
           <div className="space-y-2">
             {specificBlocks.map((block, idx) => (
-              <div key={idx} className="bg-[#222] border border-[#3a3a3a] rounded-xl p-3 flex items-start gap-2">
+              <div key={idx} className="bg-white border border-[#ede9e5] rounded-xl p-3 flex items-start gap-2">
                 <div className="flex-1 space-y-2">
                   <input
                     type="date"
@@ -155,23 +155,23 @@ export default function AvailabilityPage() {
                     className="input-field text-sm py-2"
                   />
                 </div>
-                <button onClick={() => removeSpecificBlock(idx)} className="p-1.5 text-white/30 hover:text-red-400 mt-1">
+                <button onClick={() => removeSpecificBlock(idx)} className="p-1.5 text-[#b0a8a4] hover:text-red-500 mt-1">
                   <Trash2 size={14} />
                 </button>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-white/30 text-sm text-center py-4">No blocked dates</p>
+          <p className="text-[#b0a8a4] text-sm text-center py-4">No blocked dates</p>
         )}
       </div>
 
-      <div className="bg-[#222] border border-[#3a3a3a] rounded-xl px-4 py-3 flex items-center justify-between mb-6">
+      <div className="bg-white border border-[#ede9e5] rounded-xl px-4 py-3 flex items-center justify-between mb-6">
         <div>
-          <p className="text-sm font-medium">Google Calendar</p>
-          <p className="text-xs text-white/40">Sync your calendar to block booked times</p>
+          <p className="text-sm font-medium text-[#1a1a1a]">Google Calendar</p>
+          <p className="text-xs text-[#8a7f7a]">Sync your calendar to block booked times</p>
         </div>
-        <span className="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-400">Configure in Settings</span>
+        <span className="text-xs px-2 py-1 rounded-full bg-amber-50 text-amber-600 border border-amber-200">Configure in Settings</span>
       </div>
 
       <button

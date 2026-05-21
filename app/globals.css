@@ -8,7 +8,9 @@
   --pink-dark: #7a2e58;
   --pink-light: #fff0f8;
   --pink-border: #ffe0f2;
-  --gray: #8a8a8a;
+  --cream: #f7f5f3;
+  --cream-border: #ede9e5;
+  --gray: #8a7f7a;
   --gray-light: #f2f2f0;
   --gray-mid: #d4d4d0;
   --gray-dark: #3a3a3a;
@@ -24,8 +26,8 @@ html {
 }
 
 body {
-  background: var(--black);
-  color: white;
+  background: var(--cream);
+  color: var(--black);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -40,7 +42,7 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--black);
+  background: var(--cream);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--pink-deep);
@@ -56,15 +58,15 @@ body {
     @apply bg-[#ffabdd] text-[#1a1a1a] font-semibold px-6 py-3 rounded-full hover:bg-[#c4658f] hover:text-white transition-all duration-200 active:scale-95;
   }
 
-  .btn-dark {
-    @apply bg-[#1a1a1a] text-white font-semibold px-6 py-3 rounded-full border border-[#3a3a3a] hover:border-[#ffabdd] transition-all duration-200 active:scale-95;
+  .btn-outline {
+    @apply bg-white text-[#1a1a1a] font-semibold px-6 py-3 rounded-full border border-[#ede9e5] hover:border-[#ffabdd] transition-all duration-200 active:scale-95;
   }
 
   .card {
-    @apply bg-[#222] border border-[#3a3a3a] rounded-2xl;
+    @apply bg-white border border-[#ede9e5] rounded-2xl;
   }
 
   .input-field {
-    @apply w-full bg-[#2a2a2a] border border-[#3a3a3a] rounded-xl px-4 py-3 text-white placeholder-[#8a8a8a] focus:outline-none focus:border-[#ffabdd] transition-colors;
+    @apply w-full bg-white border border-[#ede9e5] rounded-xl px-4 py-3 text-[#1a1a1a] placeholder-[#b0a8a4] focus:outline-none focus:border-[#ffabdd] transition-colors;
   }
 }

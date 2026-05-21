@@ -19,57 +19,63 @@ export default function ConfirmedPage({
   const isManualPayment = ['cashapp', 'zelle', 'applepay'].includes(method || '')
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] text-white font-sans flex flex-col items-center justify-center px-4 py-16">
+    <div className="min-h-screen bg-[#f7f5f3] font-sans flex flex-col items-center justify-center px-4 py-16">
       <div className="max-w-sm w-full text-center">
-        <p className="font-cormorant text-lg text-white/60 mb-1">Braids by</p>
+        <p className="font-cormorant text-lg text-[#8a7f7a] mb-1">Braids by</p>
         <p className="font-cormorant italic text-4xl text-[#ffabdd] mb-8">Brizee Bri</p>
 
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-full bg-[#ffabdd]/15 border-2 border-[#ffabdd] flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-[#fff0f8] border-2 border-[#ffabdd] flex items-center justify-center">
             <CheckCircle size={40} className="text-[#ffabdd]" />
           </div>
         </div>
 
-        <h1 className="text-2xl font-bold mb-2">Booking Received!</h1>
-        <p className="text-white/60 text-sm mb-8">
+        <h1 className="text-2xl font-bold text-[#1a1a1a] mb-2">Booking Received!</h1>
+        <p className="text-[#8a7f7a] text-sm mb-8">
           Confirmation sent to your email. Bri will be in touch within 24 hours.
         </p>
 
-        <div className="bg-[#222] border border-[#3a3a3a] rounded-2xl p-5 text-left space-y-3 mb-6">
+        <div className="bg-white border border-[#ede9e5] rounded-2xl p-5 text-left space-y-3 mb-6">
           {name && (
             <div className="flex justify-between text-sm">
-              <span className="text-white/50">Name</span>
-              <span className="font-medium">{name}</span>
+              <span className="text-[#8a7f7a]">Name</span>
+              <span className="font-medium text-[#1a1a1a]">{name}</span>
             </div>
           )}
           {service && (
             <div className="flex justify-between text-sm">
-              <span className="text-white/50">Service</span>
-              <span className="font-medium">{service}</span>
+              <span className="text-[#8a7f7a]">Service</span>
+              <span className="font-medium text-[#1a1a1a]">{service}</span>
             </div>
           )}
           {formattedDate && (
             <div className="flex justify-between text-sm">
-              <span className="text-white/50">Date</span>
-              <span className="font-medium">{formattedDate}</span>
+              <span className="text-[#8a7f7a]">Date</span>
+              <span className="font-medium text-[#1a1a1a]">{formattedDate}</span>
             </div>
           )}
           {time && (
             <div className="flex justify-between text-sm">
-              <span className="text-white/50">Time</span>
-              <span className="font-medium">{time}</span>
+              <span className="text-[#8a7f7a]">Time</span>
+              <span className="font-medium text-[#1a1a1a]">{time}</span>
             </div>
           )}
-          <div className="border-t border-[#3a3a3a] pt-3">
+          <div className="border-t border-[#ede9e5] pt-3">
             <div className="flex justify-between text-sm">
-              <span className="text-white/50">Deposit</span>
-              <span className="font-semibold text-[#ffabdd]">
+              <span className="text-[#8a7f7a]">Deposit</span>
+              <span className="font-semibold text-[#c4658f]">
                 ${parseFloat(deposit || '0').toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between text-sm mt-1">
-              <span className="text-white/50">Status</span>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${isManualPayment ? 'bg-amber-500/20 text-amber-400' : 'bg-[#ffabdd]/20 text-[#ffabdd]'}`}>
+              <span className="text-[#8a7f7a]">Status</span>
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full ${
+                  isManualPayment
+                    ? 'bg-amber-50 text-amber-600 border border-amber-200'
+                    : 'bg-[#fff0f8] text-[#c4658f] border border-[#ffabdd]/30'
+                }`}
+              >
                 {isManualPayment ? 'Pending payment confirmation' : 'Deposit paid'}
               </span>
             </div>
@@ -77,9 +83,9 @@ export default function ConfirmedPage({
         </div>
 
         {isManualPayment && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm text-amber-300 mb-6">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-700 mb-6">
             <p className="font-semibold mb-1">Action needed</p>
-            <p className="text-amber-300/80">
+            <p className="text-amber-600">
               Please send your deposit of ${parseFloat(deposit || '0').toFixed(2)} via{' '}
               {method === 'cashapp' ? 'CashApp' : method === 'zelle' ? 'Zelle' : 'Apple Pay'} to
               complete your booking. Bri will confirm once received.
@@ -90,7 +96,7 @@ export default function ConfirmedPage({
         {id && (
           <Link
             href={`/booking/${id}`}
-            className="text-[#ffabdd] text-sm underline underline-offset-2 block mb-6"
+            className="text-[#c4658f] text-sm underline underline-offset-2 block mb-6"
           >
             View booking status →
           </Link>
@@ -98,7 +104,7 @@ export default function ConfirmedPage({
 
         <Link
           href="/"
-          className="block w-full py-3 rounded-full border border-[#3a3a3a] text-white/70 text-sm hover:border-[#ffabdd]/40 hover:text-white transition-colors"
+          className="block w-full py-3 rounded-full border border-[#ede9e5] bg-white text-[#1a1a1a] text-sm hover:border-[#ffabdd]/50 hover:bg-[#fff0f8] transition-colors"
         >
           Back to home
         </Link>

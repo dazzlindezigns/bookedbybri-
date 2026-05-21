@@ -29,17 +29,17 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#f7f5f3] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <p className="font-cormorant text-xl text-white/60">Braids by</p>
+          <p className="font-cormorant text-xl text-[#8a7f7a]">Braids by</p>
           <p className="font-cormorant italic text-5xl text-[#ffabdd] mb-1">Brizee Bri</p>
-          <p className="text-white/30 text-xs uppercase tracking-widest">Admin</p>
+          <p className="text-[#b0a8a4] text-xs uppercase tracking-widest">Admin</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs text-white/60 mb-1.5 uppercase tracking-wider">Email</label>
+            <label className="block text-xs text-[#8a7f7a] mb-1.5 uppercase tracking-wider">Email</label>
             <input
               className="input-field"
               type="email"
@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
             />
           </div>
           <div>
-            <label className="block text-xs text-white/60 mb-1.5 uppercase tracking-wider">Password</label>
+            <label className="block text-xs text-[#8a7f7a] mb-1.5 uppercase tracking-wider">Password</label>
             <input
               className="input-field"
               type="password"
@@ -62,7 +62,7 @@ export default function AdminLoginPage() {
           </div>
 
           {error && (
-            <p className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3">
+            <p className="text-red-500 text-sm bg-red-50 border border-red-200 rounded-xl px-4 py-3">
               {error}
             </p>
           )}
@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold hover:bg-[#c4658f] hover:text-white transition-all duration-200 active:scale-95 disabled:opacity-50"
+            className="w-full py-4 rounded-full bg-[#1a1a1a] text-white font-semibold hover:bg-[#ffabdd] hover:text-[#1a1a1a] transition-all duration-200 active:scale-95 disabled:opacity-50"
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>

@@ -77,12 +77,12 @@ export default function SettingsPage() {
   }
 
   const Section = ({ title }: { title: string }) => (
-    <p className="text-xs uppercase tracking-widest text-white/40 mb-3 mt-6 first:mt-0">{title}</p>
+    <p className="text-xs uppercase tracking-widest text-[#b0a8a4] mb-3 mt-6 first:mt-0">{title}</p>
   )
 
   const Field = ({ label, k, type = 'text', placeholder = '' }: { label: string; k: string; type?: string; placeholder?: string }) => (
     <div className="mb-4">
-      <label className="text-xs text-white/60 block mb-1.5">{label}</label>
+      <label className="text-xs text-[#8a7f7a] block mb-1.5">{label}</label>
       {type === 'textarea' ? (
         <textarea
           className="input-field min-h-[80px] resize-none text-sm"
@@ -102,20 +102,20 @@ export default function SettingsPage() {
   )
 
   const Toggle = ({ label, k }: { label: string; k: string }) => (
-    <div className="flex items-center justify-between py-3 border-b border-[#2a2a2a]">
-      <span className="text-sm">{label}</span>
+    <div className="flex items-center justify-between py-3 border-b border-[#ede9e5] last:border-0">
+      <span className="text-sm text-[#1a1a1a]">{label}</span>
       <button
         onClick={() => toggle(k)}
-        className={`relative w-11 h-6 rounded-full transition-colors ${s[k] === 'true' ? 'bg-[#ffabdd]' : 'bg-[#3a3a3a]'}`}
+        className={`relative w-11 h-6 rounded-full transition-colors ${s[k] === 'true' ? 'bg-[#ffabdd]' : 'bg-[#ede9e5]'}`}
       >
-        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${s[k] === 'true' ? 'translate-x-6' : 'translate-x-1'}`} />
+        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${s[k] === 'true' ? 'translate-x-6' : 'translate-x-1'}`} />
       </button>
     </div>
   )
 
   return (
     <div className="px-4 py-6">
-      <h1 className="font-cormorant text-3xl font-semibold mb-6">Settings</h1>
+      <h1 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-6">Settings</h1>
 
       <Section title="Business Info" />
       <Field label="Business name" k="business_name" />
@@ -130,7 +130,7 @@ export default function SettingsPage() {
       <Section title="Payment Methods" />
       <Field label="CashApp handle" k="cashapp_handle" placeholder="$handle" />
       <Field label="Zelle number/email" k="zelle_contact" />
-      <div className="bg-[#222] border border-[#3a3a3a] rounded-2xl px-4 mb-4">
+      <div className="bg-white border border-[#ede9e5] rounded-2xl px-4 mb-4">
         <Toggle label="Stripe (card payments)" k="stripe_enabled" />
         <Toggle label="CashApp" k="cashapp_enabled" />
         <Toggle label="Zelle" k="zelle_enabled" />
@@ -143,18 +143,18 @@ export default function SettingsPage() {
           <button
             key={policy.id}
             onClick={() => setEditPolicy(policy)}
-            className="w-full text-left flex items-start gap-3 bg-[#222] border border-[#3a3a3a] rounded-xl p-3 hover:border-[#ffabdd]/40 transition-colors"
+            className="w-full text-left flex items-start gap-3 bg-white border border-[#ede9e5] rounded-xl p-3 hover:border-[#ffabdd]/50 transition-colors"
           >
             <span className="text-xl">{policy.icon}</span>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm">{policy.title}</p>
-              <p className="text-white/50 text-xs truncate">{policy.body}</p>
+              <p className="font-medium text-sm text-[#1a1a1a]">{policy.title}</p>
+              <p className="text-[#8a7f7a] text-xs truncate">{policy.body}</p>
             </div>
           </button>
         ))}
         <button
           onClick={() => setShowAddPolicy(true)}
-          className="w-full py-3 rounded-xl border border-dashed border-[#ffabdd]/40 text-[#ffabdd] text-sm hover:bg-[#ffabdd]/5 transition-colors"
+          className="w-full py-3 rounded-xl border border-dashed border-[#ffabdd]/50 text-[#c4658f] text-sm hover:bg-[#fff0f8] transition-colors"
         >
           + Add policy
         </button>
@@ -164,20 +164,20 @@ export default function SettingsPage() {
       <div className="space-y-2 mb-6">
         <a
           href="/api/auth/google"
-          className="flex items-center justify-between bg-[#222] border border-[#3a3a3a] rounded-xl px-4 py-3 hover:border-[#ffabdd]/40 transition-colors"
+          className="flex items-center justify-between bg-white border border-[#ede9e5] rounded-xl px-4 py-3 hover:border-[#ffabdd]/50 transition-colors"
         >
           <div>
-            <p className="text-sm font-medium">Google Calendar + Gmail</p>
-            <p className="text-xs text-white/40">Connect your Google account</p>
+            <p className="text-sm font-medium text-[#1a1a1a]">Google Calendar + Gmail</p>
+            <p className="text-xs text-[#8a7f7a]">Connect your Google account</p>
           </div>
-          <span className="text-xs text-[#ffabdd]">Connect →</span>
+          <span className="text-xs text-[#c4658f]">Connect →</span>
         </a>
-        <div className="flex items-center justify-between bg-[#222] border border-[#3a3a3a] rounded-xl px-4 py-3">
+        <div className="flex items-center justify-between bg-white border border-[#ede9e5] rounded-xl px-4 py-3">
           <div>
-            <p className="text-sm font-medium">Push Notifications</p>
-            <p className="text-xs text-white/40">Get notified on new bookings</p>
+            <p className="text-sm font-medium text-[#1a1a1a]">Push Notifications</p>
+            <p className="text-xs text-[#8a7f7a]">Get notified on new bookings</p>
           </div>
-          <span className="text-xs text-white/40">Enable on device</span>
+          <span className="text-xs text-[#b0a8a4]">Enable on device</span>
         </div>
       </div>
 
@@ -190,16 +190,16 @@ export default function SettingsPage() {
       </button>
 
       {editPolicy && (
-        <div className="fixed inset-0 bg-black/80 flex items-end z-50 p-4" onClick={() => setEditPolicy(null)}>
-          <div className="w-full max-w-sm mx-auto bg-[#222] rounded-2xl p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
-            <p className="font-semibold">Edit Policy</p>
+        <div className="fixed inset-0 bg-black/50 flex items-end z-50 p-4" onClick={() => setEditPolicy(null)}>
+          <div className="w-full max-w-sm mx-auto bg-white rounded-2xl p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
+            <p className="font-semibold text-[#1a1a1a]">Edit Policy</p>
             <div className="flex items-center gap-2">
               <input className="input-field w-16 text-center text-xl" value={editPolicy.icon} onChange={(e) => setEditPolicy((p) => p && ({ ...p, icon: e.target.value }))} />
               <input className="input-field flex-1" placeholder="Title" value={editPolicy.title} onChange={(e) => setEditPolicy((p) => p && ({ ...p, title: e.target.value }))} />
             </div>
             <textarea className="input-field min-h-[80px] resize-none text-sm" placeholder="Policy body" value={editPolicy.body} onChange={(e) => setEditPolicy((p) => p && ({ ...p, body: e.target.value }))} />
             <div className="flex gap-2">
-              <button onClick={() => setEditPolicy(null)} className="flex-1 py-3 rounded-full border border-[#3a3a3a] text-sm">Cancel</button>
+              <button onClick={() => setEditPolicy(null)} className="flex-1 py-3 rounded-full border border-[#ede9e5] text-sm text-[#1a1a1a]">Cancel</button>
               <button onClick={handleSavePolicy} disabled={saving} className="flex-1 py-3 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm">
                 <Check size={14} className="inline mr-1" /> Save
               </button>
@@ -209,16 +209,16 @@ export default function SettingsPage() {
       )}
 
       {showAddPolicy && (
-        <div className="fixed inset-0 bg-black/80 flex items-end z-50 p-4" onClick={() => setShowAddPolicy(false)}>
-          <div className="w-full max-w-sm mx-auto bg-[#222] rounded-2xl p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
-            <p className="font-semibold">Add Policy</p>
+        <div className="fixed inset-0 bg-black/50 flex items-end z-50 p-4" onClick={() => setShowAddPolicy(false)}>
+          <div className="w-full max-w-sm mx-auto bg-white rounded-2xl p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
+            <p className="font-semibold text-[#1a1a1a]">Add Policy</p>
             <div className="flex items-center gap-2">
               <input className="input-field w-16 text-center text-xl" value={newPolicy.icon} onChange={(e) => setNewPolicy((p) => ({ ...p, icon: e.target.value }))} />
               <input className="input-field flex-1" placeholder="Title" value={newPolicy.title} onChange={(e) => setNewPolicy((p) => ({ ...p, title: e.target.value }))} />
             </div>
             <textarea className="input-field min-h-[80px] resize-none text-sm" placeholder="Policy body" value={newPolicy.body} onChange={(e) => setNewPolicy((p) => ({ ...p, body: e.target.value }))} />
             <div className="flex gap-2">
-              <button onClick={() => setShowAddPolicy(false)} className="flex-1 py-3 rounded-full border border-[#3a3a3a] text-sm">Cancel</button>
+              <button onClick={() => setShowAddPolicy(false)} className="flex-1 py-3 rounded-full border border-[#ede9e5] text-sm text-[#1a1a1a]">Cancel</button>
               <button onClick={handleAddPolicy} disabled={saving || !newPolicy.title} className="flex-1 py-3 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm">Add</button>
             </div>
           </div>

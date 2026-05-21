@@ -41,7 +41,7 @@ export default function GalleryPage() {
   return (
     <div className="px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-cormorant text-3xl font-semibold">Gallery</h1>
+        <h1 className="font-cormorant text-3xl font-semibold text-[#1a1a1a]">Gallery</h1>
         <label className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm cursor-pointer hover:bg-[#c4658f] hover:text-white transition-all">
           <Upload size={15} />
           {uploading ? 'Uploading...' : 'Add photos'}
@@ -61,22 +61,22 @@ export default function GalleryPage() {
               />
               <button
                 onClick={() => handleDelete(photo.id, photo.storage_path)}
-                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500"
+                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 shadow-sm"
               >
-                <X size={12} />
+                <X size={12} className="text-red-500" />
               </button>
             </div>
           ))}
         </div>
       ) : (
-        <div className="bg-[#222] border border-dashed border-[#3a3a3a] rounded-2xl p-10 text-center mb-6">
-          <p className="text-white/30 text-sm">No photos yet. Upload your first photo!</p>
+        <div className="bg-white border border-dashed border-[#ede9e5] rounded-2xl p-10 text-center mb-6">
+          <p className="text-[#b0a8a4] text-sm">No photos yet. Upload your first photo!</p>
         </div>
       )}
 
-      <div className="bg-[#1a1a1a] border border-[#3a3a3a] rounded-2xl p-4 flex items-center gap-3">
-        <Instagram size={18} className="text-[#ffabdd] flex-shrink-0" />
-        <p className="text-xs text-white/50">
+      <div className="bg-[#fff0f8] border border-[#ffabdd]/30 rounded-2xl p-4 flex items-center gap-3">
+        <Instagram size={18} className="text-[#c4658f] flex-shrink-0" />
+        <p className="text-xs text-[#8a7f7a]">
           Tip: Share your work on Instagram and sync photos here to keep your gallery fresh.
         </p>
       </div>
