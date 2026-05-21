@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import AdminNav from './AdminNav'
+
+export const metadata: Metadata = {
+  title: 'Admin | Braids by Brizee Bri',
+  manifest: '/admin-manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Bri Admin',
+  },
+}
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const sb = createSupabaseServerClient()
