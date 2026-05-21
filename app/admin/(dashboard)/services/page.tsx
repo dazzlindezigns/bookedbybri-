@@ -30,14 +30,24 @@ export default function ServicesPage() {
     hair_included: true,
   })
 
+  const [loadError, setLoadError] = useState('')
+
   const load = async () => {
-    const [svcRes, setRes] = await Promise.all([
-      fetch('/api/services').then((r) => r.json()),
-      fetch('/api/settings').then((r) => r.json()),
-    ])
-    setServices(svcRes)
-    setDepositType(setRes.deposit_type || 'flat')
-    setDepositValue(setRes.deposit_value || '50')
+    try {
+      const [svcRes, setRes] = await Promise.all([
+        fetch('/api/services').then((r) => r.json()),
+        fetch('/api/settings').then((r) => r.json()),
+      ])
+      if (!Array.isArray(svcRes)) {
+        setLoadError(svcRes?.error || 'Failed to load services — check Supabase env vars in Vercel')
+        return
+      }
+      setServices(svcRes)
+      setDepositType(setRes.deposit_type || 'flat')
+      setDepositValue(setRes.deposit_value || '50')
+    } catch (e) {
+      setLoadError(String(e))
+    }
   }
 
   useEffect(() => { load() }, [])
@@ -86,6 +96,9 @@ export default function ServicesPage() {
   return (
     <div className="px-4 py-6">
       <h1 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-6">Services</h1>
+      {loadError && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">{loadError}</div>
+      )}
 
       <div className="bg-white border border-[#ffabdd]/40 rounded-2xl p-5 mb-6">
         <p className="font-semibold text-[#1a1a1a] mb-4">Deposit Settings</p>
