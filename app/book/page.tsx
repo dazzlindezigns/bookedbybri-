@@ -473,6 +473,26 @@ export default function BookPage() {
                     Send ${depositAmount.toFixed(2)} to <strong>{settings.zelle_contact}</strong> via Zelle. Bri will confirm once received.
                   </p>
                 )}
+                {paymentMethod === 'applepay' && (
+                  <p className="text-[#6b6460]">
+                    Send ${depositAmount.toFixed(2)} via Apple Pay. Bri will confirm once received.
+                  </p>
+                )}
+                {(() => {
+                  const url = paymentMethod === 'cashapp' ? settings.cashapp_url
+                    : paymentMethod === 'zelle' ? settings.zelle_url
+                    : paymentMethod === 'applepay' ? settings.applepay_url : ''
+                  return url ? (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm hover:bg-[#c4658f] hover:text-white transition-all"
+                    >
+                      Open {paymentMethod === 'cashapp' ? 'CashApp' : paymentMethod === 'zelle' ? 'Zelle' : 'Apple Pay'} →
+                    </a>
+                  ) : null
+                })()}
               </div>
             )}
             <div className="bg-white border border-[#ede9e5] rounded-2xl p-4 text-sm space-y-2">

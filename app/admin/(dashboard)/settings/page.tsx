@@ -137,7 +137,10 @@ export default function SettingsPage() {
 
       <Section title="Payment Methods" />
       <Field label="CashApp handle" k="cashapp_handle" placeholder="$handle" />
+      <Field label="CashApp link" k="cashapp_url" placeholder="https://cash.app/$handle" />
       <Field label="Zelle number/email" k="zelle_contact" />
+      <Field label="Zelle link" k="zelle_url" placeholder="https://enroll.zellepay.com/..." />
+      <Field label="Apple Pay link" k="applepay_url" placeholder="https://..." />
       <div className="bg-white border border-[#ede9e5] rounded-2xl px-4 mb-4">
         <Toggle label="Stripe (card payments)" k="stripe_enabled" />
         <Toggle label="CashApp" k="cashapp_enabled" />
