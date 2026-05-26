@@ -26,7 +26,7 @@ export default function ServicesPage() {
     name: '',
     description: '',
     base_price: '',
-    duration_minutes: '60',
+    duration_minutes: '3',
     requires_consultation: false,
     hair_included: true,
   })
@@ -79,7 +79,7 @@ export default function ServicesPage() {
         body: JSON.stringify({
           ...newSvc,
           base_price: newSvc.requires_consultation ? null : parseFloat(newSvc.base_price) || null,
-          duration_minutes: parseInt(newSvc.duration_minutes),
+          duration_minutes: Math.round(parseFloat(newSvc.duration_minutes) * 60),
           display_order: services.length + 1,
           active: true,
         }),
@@ -158,7 +158,7 @@ export default function ServicesPage() {
             <div className="flex-1 min-w-0">
               <p className="font-medium text-sm text-[#1a1a1a]">{svc.name}</p>
               <p className="text-[#8a7f7a] text-xs mt-0.5">
-                {svc.duration_minutes}min ·{' '}
+                {svc.duration_minutes >= 60 ? `${svc.duration_minutes / 60}hr` : `${svc.duration_minutes}min`} ·{' '}
                 {svc.requires_consultation ? (
                   <span className="text-[#c4658f]">Consultation</span>
                 ) : svc.base_price ? (
@@ -199,8 +199,8 @@ export default function ServicesPage() {
               <input className="input-field" value={newSvc.description} onChange={(e) => setNewSvc((p) => ({ ...p, description: e.target.value }))} />
             </div>
             <div>
-              <label className="text-xs text-[#8a7f7a] block mb-1">Duration (minutes)</label>
-              <input type="number" className="input-field" value={newSvc.duration_minutes} onChange={(e) => setNewSvc((p) => ({ ...p, duration_minutes: e.target.value }))} />
+              <label className="text-xs text-[#8a7f7a] block mb-1">Duration (hours)</label>
+              <input type="number" step="0.5" min="0.5" className="input-field" value={newSvc.duration_minutes} onChange={(e) => setNewSvc((p) => ({ ...p, duration_minutes: e.target.value }))} placeholder="e.g. 3" />
             </div>
             <div className="flex gap-3">
               <label className="flex items-center gap-2 text-sm cursor-pointer text-[#1a1a1a]">
