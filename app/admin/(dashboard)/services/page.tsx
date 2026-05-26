@@ -21,6 +21,7 @@ export default function ServicesPage() {
   const [depositValue, setDepositValue] = useState('50')
   const [showAdd, setShowAdd] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
   const [newSvc, setNewSvc] = useState({
     name: '',
     description: '',
@@ -70,21 +71,31 @@ export default function ServicesPage() {
 
   const handleAddService = async () => {
     setSaving(true)
-    const res = await fetch('/api/services', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...newSvc,
-        base_price: newSvc.requires_consultation ? null : parseFloat(newSvc.base_price) || null,
-        duration_minutes: parseInt(newSvc.duration_minutes),
-        display_order: services.length + 1,
-        active: true,
-      }),
-    })
-    const created = await res.json()
-    setServices((prev) => [...prev, created])
-    setShowAdd(false)
-    setNewSvc({ name: '', description: '', base_price: '', duration_minutes: '60', requires_consultation: false, hair_included: true })
+    setSaveError('')
+    try {
+      const res = await fetch('/api/services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...newSvc,
+          base_price: newSvc.requires_consultation ? null : parseFloat(newSvc.base_price) || null,
+          duration_minutes: parseInt(newSvc.duration_minutes),
+          display_order: services.length + 1,
+          active: true,
+        }),
+      })
+      const created = await res.json()
+      if (!res.ok || created?.error) {
+        setSaveError(created?.error || 'Failed to save service')
+        setSaving(false)
+        return
+      }
+      setServices((prev) => [...prev, created])
+      setShowAdd(false)
+      setNewSvc({ name: '', description: '', base_price: '', duration_minutes: '60', requires_consultation: false, hair_included: true })
+    } catch (e) {
+      setSaveError(String(e))
+    }
     setSaving(false)
   }
 
@@ -207,9 +218,12 @@ export default function ServicesPage() {
                 <input type="number" className="input-field" value={newSvc.base_price} onChange={(e) => setNewSvc((p) => ({ ...p, base_price: e.target.value }))} placeholder="0" />
               </div>
             )}
+            {saveError && (
+              <p className="text-red-500 text-xs bg-red-50 border border-red-200 rounded-xl px-3 py-2">{saveError}</p>
+            )}
             <div className="flex gap-2 pt-2">
               <button onClick={() => setShowAdd(false)} className="flex-1 py-3 rounded-full border border-[#ede9e5] text-[#1a1a1a] text-sm">Cancel</button>
-              <button onClick={handleAddService} disabled={saving || !newSvc.name} className="flex-1 py-3 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm disabled:opacity-50">Add service</button>
+              <button onClick={handleAddService} disabled={saving || !newSvc.name} className="flex-1 py-3 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm disabled:opacity-50">{saving ? 'Saving...' : 'Add service'}</button>
             </div>
           </div>
         </div>
