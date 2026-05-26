@@ -12,6 +12,7 @@ export default function SettingsPage() {
   const [policies, setPolicies] = useState<Policy[]>([])
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [policyError, setPolicyError] = useState('')
   const [editPolicy, setEditPolicy] = useState<Policy | null>(null)
   const [showAddPolicy, setShowAddPolicy] = useState(false)
   const [newPolicy, setNewPolicy] = useState<Policy>({ icon: '📋', title: '', body: '', display_order: 0, active: true })
@@ -65,11 +66,18 @@ export default function SettingsPage() {
 
   const handleAddPolicy = async () => {
     setSaving(true)
-    await fetch('/api/policies', {
+    setPolicyError('')
+    const res = await fetch('/api/policies', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...newPolicy, display_order: policies.length + 1 }),
     })
+    const data = await res.json()
+    if (!res.ok || data?.error) {
+      setPolicyError(data?.error || 'Failed to save policy')
+      setSaving(false)
+      return
+    }
     await load()
     setShowAddPolicy(false)
     setNewPolicy({ icon: '📋', title: '', body: '', display_order: 0, active: true })
@@ -217,9 +225,12 @@ export default function SettingsPage() {
               <input className="input-field flex-1" placeholder="Title" value={newPolicy.title} onChange={(e) => setNewPolicy((p) => ({ ...p, title: e.target.value }))} />
             </div>
             <textarea className="input-field min-h-[80px] resize-none text-sm" placeholder="Policy body" value={newPolicy.body} onChange={(e) => setNewPolicy((p) => ({ ...p, body: e.target.value }))} />
+            {policyError && (
+              <p className="text-red-500 text-xs bg-red-50 border border-red-200 rounded-xl px-3 py-2">{policyError}</p>
+            )}
             <div className="flex gap-2">
               <button onClick={() => setShowAddPolicy(false)} className="flex-1 py-3 rounded-full border border-[#ede9e5] text-sm text-[#1a1a1a]">Cancel</button>
-              <button onClick={handleAddPolicy} disabled={saving || !newPolicy.title} className="flex-1 py-3 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm">Add</button>
+              <button onClick={handleAddPolicy} disabled={saving || !newPolicy.title} className="flex-1 py-3 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm">{saving ? 'Saving...' : 'Add'}</button>
             </div>
           </div>
         </div>
