@@ -84,6 +84,34 @@ export default function SettingsPage() {
     setSaving(false)
   }
 
+  const [notifStatus, setNotifStatus] = useState<'idle' | 'loading' | 'enabled' | 'denied' | 'error'>('idle')
+
+  const enableNotifications = async () => {
+    setNotifStatus('loading')
+    try {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        setNotifStatus('error'); return
+      }
+      const permission = await Notification.requestPermission()
+      if (permission !== 'granted') { setNotifStatus('denied'); return }
+
+      const reg = await navigator.serviceWorker.register('/sw-custom.js')
+      await navigator.serviceWorker.ready
+
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+      })
+
+      const res = await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sub),
+      })
+      setNotifStatus(res.ok ? 'enabled' : 'error')
+    } catch { setNotifStatus('error') }
+  }
+
   const Section = ({ title }: { title: string }) => (
     <p className="text-xs uppercase tracking-widest text-[#b0a8a4] mb-3 mt-6 first:mt-0">{title}</p>
   )
@@ -186,9 +214,20 @@ export default function SettingsPage() {
         <div className="flex items-center justify-between bg-white border border-[#ede9e5] rounded-xl px-4 py-3">
           <div>
             <p className="text-sm font-medium text-[#1a1a1a]">Push Notifications</p>
-            <p className="text-xs text-[#8a7f7a]">Get notified on new bookings</p>
+            <p className="text-xs text-[#8a7f7a]">
+              {notifStatus === 'enabled' ? 'Notifications enabled on this device ✓'
+                : notifStatus === 'denied' ? 'Permission denied — enable in browser settings'
+                : notifStatus === 'error' ? 'Something went wrong — try again'
+                : 'Get notified on new bookings'}
+            </p>
           </div>
-          <span className="text-xs text-[#b0a8a4]">Enable on device</span>
+          <button
+            onClick={enableNotifications}
+            disabled={notifStatus === 'loading' || notifStatus === 'enabled'}
+            className="text-xs font-medium text-[#c4658f] disabled:text-[#b0a8a4] whitespace-nowrap"
+          >
+            {notifStatus === 'loading' ? 'Enabling…' : notifStatus === 'enabled' ? 'Enabled ✓' : 'Enable →'}
+          </button>
         </div>
       </div>
 
