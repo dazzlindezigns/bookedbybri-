@@ -86,6 +86,13 @@ export default function SettingsPage() {
 
   const [notifStatus, setNotifStatus] = useState<'idle' | 'loading' | 'enabled' | 'denied' | 'error'>('idle')
 
+  const urlBase64ToUint8Array = (base64String: string) => {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4)
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+    const rawData = window.atob(base64)
+    return new Uint8Array([...rawData].map((c) => c.charCodeAt(0)))
+  }
+
   const enableNotifications = async () => {
     setNotifStatus('loading')
     try {
@@ -98,9 +105,12 @@ export default function SettingsPage() {
       const reg = await navigator.serviceWorker.register('/sw-custom.js')
       await navigator.serviceWorker.ready
 
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+      if (!vapidKey) { setNotifStatus('error'); return }
+
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey),
       })
 
       const res = await fetch('/api/push/subscribe', {
