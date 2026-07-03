@@ -65,6 +65,14 @@ export async function getCalendarEvents(refreshToken: string, date: string) {
   return res.data.items || []
 }
 
+function encodeRaw(message: string) {
+  return Buffer.from(message)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '')
+}
+
 export async function sendGmail(
   refreshToken: string,
   to: string,
@@ -83,14 +91,48 @@ export async function sendGmail(
     htmlBody,
   ].join('\n')
 
-  const encodedMessage = Buffer.from(message)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '')
+  await gmail.users.messages.send({
+    userId: 'me',
+    requestBody: { raw: encodeRaw(message) },
+  })
+}
+
+export async function sendGmailWithIcs(
+  refreshToken: string,
+  to: string,
+  subject: string,
+  htmlBody: string,
+  icsContent: string
+) {
+  const auth = await getAuthenticatedClient(refreshToken)
+  const gmail = google.gmail({ version: 'v1', auth })
+
+  const boundary = `BookedByBri_${Date.now()}`
+  const icsBase64 = Buffer.from(icsContent).toString('base64')
+
+  const message = [
+    `To: ${to}`,
+    'MIME-Version: 1.0',
+    `Subject: ${subject}`,
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset="UTF-8"',
+    '',
+    htmlBody,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/calendar; charset="UTF-8"; method=REQUEST; name="appointment.ics"',
+    'Content-Transfer-Encoding: base64',
+    'Content-Disposition: attachment; filename="appointment.ics"',
+    '',
+    icsBase64,
+    '',
+    `--${boundary}--`,
+  ].join('\n')
 
   await gmail.users.messages.send({
     userId: 'me',
-    requestBody: { raw: encodedMessage },
+    requestBody: { raw: encodeRaw(message) },
   })
 }

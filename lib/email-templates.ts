@@ -104,6 +104,26 @@ export function bookingConfirmed(clientName: string, serviceName: string, date: 
   `)
 }
 
+export function bookingAccepted(clientName: string, serviceName: string, date: string, time: string, depositAmount: number, paymentInstructions: string): string {
+  return wrapEmail(`
+    <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">You&apos;re approved! 🎉</h1>
+    <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, Bri has reviewed your request and would love to have you!</p>
+    <div style="background: #fff0f8; border: 1px solid #ffe0f2; border-radius: 12px; padding: 20px; margin-bottom: 28px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        ${infoRow('Service', serviceName)}
+        ${infoRow('Date', date)}
+        ${infoRow('Time', time)}
+        ${infoRow('Deposit due', `$${depositAmount.toFixed(2)}`)}
+      </table>
+    </div>
+    <p style="color: #1a1a1a; font-size: 15px; font-weight: 600; margin: 0 0 12px;">To confirm your spot, send your deposit:</p>
+    <div style="background: #f2f2f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 28px;">
+      <p style="color: #3a3a3a; font-size: 14px; margin: 0; line-height: 1.8;">${paymentInstructions}</p>
+    </div>
+    <p style="color: #8a8a8a; font-size: 13px; margin: 0;">Once your deposit is received you&apos;ll get a final confirmation with your calendar invite. Spots aren&apos;t held until the deposit is paid 💕</p>
+  `)
+}
+
 export function bookingDeclined(clientName: string, serviceName: string, declineReason?: string): string {
   return wrapEmail(`
     <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Update on your request</h1>

@@ -3,7 +3,8 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase'
 import { sendGmail } from '@/lib/google'
-import { bookingDeclined } from '@/lib/email-templates'
+import { bookingAccepted, bookingDeclined } from '@/lib/email-templates'
+import { handleDepositReceived } from '@/lib/deposit'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const sb = createSupabaseAdminClient()
@@ -26,31 +27,83 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     .from('bookings')
     .update(updates)
     .eq('id', params.id)
-    .select('*, services(name)')
+    .select('*, services(name, duration_minutes)')
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
+  const svc = booking.services as { name: string; duration_minutes: number } | null
+  const serviceName = svc?.name ?? 'your appointment'
+
+  // Bri accepted the request — email client to pay deposit
+  if (updates.status === 'confirmed') {
+    try {
+      const [{ data: tokenRow }, { data: settingsRows }] = await Promise.all([
+        sb.from('admin_settings').select('value').eq('key', 'google_refresh_token').maybeSingle(),
+        sb.from('admin_settings').select('key, value').in('key', [
+          'cashapp_handle', 'cashapp_url', 'zelle_contact', 'zelle_url',
+          'applepay_url', 'cashapp_enabled', 'zelle_enabled', 'applepay_enabled', 'stripe_enabled',
+        ]),
+      ])
+
+      if (tokenRow?.value) {
+        const cfg: Record<string, string> = {}
+        settingsRows?.forEach((r) => { cfg[r.key] = r.value })
+
+        const methods: string[] = []
+        if (cfg.cashapp_enabled === 'true' && cfg.cashapp_handle)
+          methods.push(`CashApp: <strong>${cfg.cashapp_handle}</strong>${cfg.cashapp_url ? ` — <a href="${cfg.cashapp_url}">Pay now</a>` : ''}`)
+        if (cfg.zelle_enabled === 'true' && cfg.zelle_contact)
+          methods.push(`Zelle: <strong>${cfg.zelle_contact}</strong>${cfg.zelle_url ? ` — <a href="${cfg.zelle_url}">Pay now</a>` : ''}`)
+        if (cfg.applepay_enabled === 'true' && cfg.applepay_url)
+          methods.push(`Apple Pay: <a href="${cfg.applepay_url}">Pay now</a>`)
+        if (cfg.stripe_enabled === 'true')
+          methods.push('Card: a payment link will be sent separately')
+
+        const paymentInstructions = methods.length
+          ? methods.join('<br>')
+          : 'Bri will send you payment instructions shortly.'
+
+        const dateStr = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', {
+          weekday: 'long', month: 'long', day: 'numeric',
+        })
+
+        await sendGmail(
+          tokenRow.value,
+          booking.client_email,
+          "You're approved! — Braids by Brizee Bri",
+          bookingAccepted(
+            booking.client_name,
+            serviceName,
+            dateStr,
+            booking.appointment_time,
+            booking.deposit_amount ?? 0,
+            paymentInstructions
+          )
+        )
+      }
+    } catch {}
+  }
+
+  // Deposit received (manual payment marked by Bri) — add to calendar + send ICS
+  if (updates.payment_status === 'deposit_paid') {
+    await handleDepositReceived(params.id).catch(() => {})
+  }
+
+  // Bri declined — email client with reason
   if (updates.status === 'declined' && declineReason) {
     try {
-      const { data: settings } = await sb
-        .from('admin_settings')
-        .select('value')
-        .eq('key', 'google_refresh_token')
-        .maybeSingle()
-
-      if (settings?.value) {
-        const serviceName = (booking.services as { name: string } | null)?.name || 'your appointment'
+      const { data: tokenRow } = await sb
+        .from('admin_settings').select('value').eq('key', 'google_refresh_token').maybeSingle()
+      if (tokenRow?.value) {
         await sendGmail(
-          settings.value,
+          tokenRow.value,
           booking.client_email,
           'Update on your booking — Braids by Brizee Bri',
           bookingDeclined(booking.client_name, serviceName, declineReason)
         )
       }
-    } catch {
-      // Email not critical
-    }
+    } catch {}
   }
 
   return NextResponse.json(booking)

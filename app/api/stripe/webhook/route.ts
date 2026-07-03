@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { createSupabaseAdminClient } from '@/lib/supabase'
+import { handleDepositReceived } from '@/lib/deposit'
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
@@ -26,6 +27,7 @@ export async function POST(req: NextRequest) {
     if (bookingId) {
       const sb = createSupabaseAdminClient()
       await sb.from('bookings').update({ payment_status: 'deposit_paid' }).eq('id', bookingId)
+      await handleDepositReceived(bookingId).catch(() => {})
     }
   }
 

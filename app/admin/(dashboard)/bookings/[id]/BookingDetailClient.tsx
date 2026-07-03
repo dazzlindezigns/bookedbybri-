@@ -100,6 +100,24 @@ export default function BookingDetailClient({
     }
   }
 
+  const handleAccept = async () => {
+    setSubmitting(true)
+    setError('')
+    try {
+      const res = await fetch(`/api/bookings/${booking.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'confirmed' }),
+      })
+      if (!res.ok) throw new Error('Failed to accept booking')
+      router.refresh()
+    } catch {
+      setError('Failed to accept. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const handleMarkPaid = async () => {
     setSubmitting(true)
     try {
@@ -120,6 +138,32 @@ export default function BookingDetailClient({
 
   return (
     <div className="space-y-5">
+
+      {/* Accept / Decline — only shown when pending */}
+      {booking.status === 'pending' && (
+        <div className="bg-[#fff0f8] border border-[#ffabdd]/40 rounded-2xl p-4 space-y-3">
+          <p className="text-sm font-semibold text-[#1a1a1a]">New request — review and respond</p>
+          {error && <p className="text-red-500 text-xs bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowDecline(true)}
+              disabled={submitting}
+              className="flex-1 py-3 rounded-full border border-[#ede9e5] text-sm text-[#8a7f7a] bg-white hover:border-red-300 hover:text-red-500 transition-colors"
+            >
+              Decline
+            </button>
+            <button
+              onClick={handleAccept}
+              disabled={submitting}
+              className="flex-1 py-3 rounded-full bg-[#ffabdd] text-[#1a1a1a] text-sm font-semibold hover:bg-[#c4658f] hover:text-white transition-all disabled:opacity-50"
+            >
+              {submitting ? 'Accepting...' : 'Accept ✓'}
+            </button>
+          </div>
+          <p className="text-[#8a7f7a] text-xs text-center">Accepting emails the client to pay their deposit</p>
+        </div>
+      )}
+
       {booking.booking_images?.length > 0 && (
         <div>
           <p className="text-xs text-[#8a7f7a] uppercase tracking-wider mb-3">Style Inspiration</p>
