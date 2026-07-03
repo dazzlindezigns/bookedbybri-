@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { AlertTriangle, Pencil } from 'lucide-react'
 
 type BookingImage = { id: string; storage_path: string; file_name: string }
 type Service = { id: string; name: string; base_price: number | null; duration_minutes: number }
@@ -31,9 +33,13 @@ const DEFAULT_MESSAGE = (name: string, service: string) =>
 export default function BookingDetailClient({
   booking,
   supabaseUrl,
+  conflictingBookings = [],
+  clientBookingCount = 0,
 }: {
   booking: Booking
   supabaseUrl: string
+  conflictingBookings?: { id: string; client_name: string; appointment_time: string }[]
+  clientBookingCount?: number
 }) {
   const router = useRouter()
   const [finalPrice, setFinalPrice] = useState<string>(booking.final_price?.toString() || '')
@@ -46,6 +52,11 @@ export default function BookingDetailClient({
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
 
+  // Date/time editing
+  const [editingDateTime, setEditingDateTime] = useState(false)
+  const [editDate, setEditDate] = useState(booking.appointment_date)
+  const [editTime, setEditTime] = useState(booking.appointment_time)
+
   const balanceDue =
     finalPrice && !isNaN(parseFloat(finalPrice))
       ? parseFloat(finalPrice) - booking.deposit_amount
@@ -53,6 +64,24 @@ export default function BookingDetailClient({
 
   const photoUrl = (path: string) =>
     `${supabaseUrl}/storage/v1/object/public/booking-images/${path}`
+
+  const patch = async (updates: Record<string, unknown>, extra?: Record<string, unknown>) => {
+    setSubmitting(true)
+    setError('')
+    try {
+      const res = await fetch(`/api/bookings/${booking.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...updates, ...extra }),
+      })
+      if (!res.ok) throw new Error('Request failed')
+      router.refresh()
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   const handleSendQuote = async () => {
     if (!finalPrice || isNaN(parseFloat(finalPrice))) {
@@ -101,35 +130,31 @@ export default function BookingDetailClient({
   }
 
   const handleAccept = async () => {
-    setSubmitting(true)
-    setError('')
-    try {
-      const res = await fetch(`/api/bookings/${booking.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'confirmed' }),
-      })
-      if (!res.ok) throw new Error('Failed to accept booking')
-      router.refresh()
-    } catch {
-      setError('Failed to accept. Please try again.')
-    } finally {
-      setSubmitting(false)
-    }
+    await patch({ status: 'confirmed' })
   }
 
   const handleMarkPaid = async () => {
-    setSubmitting(true)
-    try {
-      await fetch(`/api/bookings/${booking.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ payment_status: 'deposit_paid' }),
-      })
-      router.refresh()
-    } finally {
-      setSubmitting(false)
-    }
+    await patch({ payment_status: 'deposit_paid' })
+  }
+
+  const handleSaveDateTime = async () => {
+    await patch({ appointment_date: editDate, appointment_time: editTime })
+    setEditingDateTime(false)
+  }
+
+  const handleMarkComplete = async () => {
+    if (!confirm('Mark this appointment as completed? This will send a Google review request email to the client.')) return
+    await patch({ status: 'completed' })
+  }
+
+  const handleMarkNoShow = async () => {
+    if (!confirm('Mark this client as a no-show?')) return
+    await patch({ status: 'no_show' })
+  }
+
+  const handleCancel = async () => {
+    if (!confirm('Cancel this appointment? The client will be notified. Deposits are non-refundable.')) return
+    await patch({ status: 'cancelled' })
   }
 
   const formattedDate = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', {
@@ -138,6 +163,30 @@ export default function BookingDetailClient({
 
   return (
     <div className="space-y-5">
+
+      {/* Conflict warning — shown for pending requests with overlapping confirmed bookings */}
+      {conflictingBookings.length > 0 && (
+        <div className="bg-amber-50 border border-amber-300 rounded-2xl p-4">
+          <div className="flex items-start gap-2 mb-2">
+            <AlertTriangle size={16} className="text-amber-500 mt-0.5 flex-shrink-0" />
+            <p className="text-sm font-semibold text-amber-700">Schedule conflict detected</p>
+          </div>
+          <p className="text-xs text-amber-600 mb-2">
+            You already have confirmed bookings on{' '}
+            {new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}:
+          </p>
+          {conflictingBookings.map((c) => (
+            <Link
+              key={c.id}
+              href={`/admin/bookings/${c.id}`}
+              className="block text-xs text-amber-700 font-medium hover:underline"
+            >
+              {c.client_name} · {c.appointment_time} →
+            </Link>
+          ))}
+          <p className="text-xs text-amber-500 mt-2">Accept only if you can accommodate both, or negotiate a different time via chat.</p>
+        </div>
+      )}
 
       {/* Accept / Decline — only shown when pending */}
       {booking.status === 'pending' && (
@@ -164,6 +213,50 @@ export default function BookingDetailClient({
         </div>
       )}
 
+      {/* Confirmed actions */}
+      {booking.status === 'confirmed' && (
+        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 space-y-2">
+          <p className="text-sm font-semibold text-green-700 mb-3">Appointment confirmed</p>
+          {error && <p className="text-red-500 text-xs bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={handleMarkComplete}
+              disabled={submitting}
+              className="py-2.5 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
+            >
+              Mark Complete ✓
+            </button>
+            <button
+              onClick={handleMarkNoShow}
+              disabled={submitting}
+              className="py-2.5 rounded-full border border-orange-300 text-orange-600 text-sm hover:bg-orange-50 transition-colors disabled:opacity-50"
+            >
+              No-show
+            </button>
+          </div>
+          <button
+            onClick={handleCancel}
+            disabled={submitting}
+            className="w-full py-2 rounded-full border border-red-200 text-red-500 text-xs hover:bg-red-50 transition-colors disabled:opacity-50"
+          >
+            Cancel appointment
+          </button>
+        </div>
+      )}
+
+      {/* Cancel button for pending requests */}
+      {booking.status === 'pending' && (
+        <div className="text-center">
+          <button
+            onClick={handleCancel}
+            disabled={submitting}
+            className="text-xs text-[#b0a8a4] hover:text-red-500 transition-colors"
+          >
+            Cancel this request
+          </button>
+        </div>
+      )}
+
       {booking.booking_images?.length > 0 && (
         <div>
           <p className="text-xs text-[#8a7f7a] uppercase tracking-wider mb-3">Style Inspiration</p>
@@ -183,27 +276,84 @@ export default function BookingDetailClient({
       )}
 
       <div className="bg-white border border-[#ede9e5] rounded-2xl p-4 space-y-3 text-sm">
-        <p className="text-xs text-[#8a7f7a] uppercase tracking-wider">Booking Summary</p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-[#8a7f7a] uppercase tracking-wider">Booking Summary</p>
+          {clientBookingCount > 0 && (
+            <Link
+              href={`/admin/bookings?client=${encodeURIComponent(booking.client_email)}`}
+              className="text-xs text-[#c4658f] hover:underline"
+            >
+              +{clientBookingCount} past booking{clientBookingCount !== 1 ? 's' : ''} →
+            </Link>
+          )}
+        </div>
         <div className="flex justify-between"><span className="text-[#8a7f7a]">Client</span><span className="font-medium text-[#1a1a1a]">{booking.client_name}</span></div>
         <div className="flex justify-between"><span className="text-[#8a7f7a]">Email</span><span className="text-[#1a1a1a]">{booking.client_email}</span></div>
         <div className="flex justify-between"><span className="text-[#8a7f7a]">Phone</span><span className="text-[#1a1a1a]">{booking.client_phone}</span></div>
         <div className="flex justify-between"><span className="text-[#8a7f7a]">Service</span><span className="font-medium text-[#1a1a1a]">{booking.services?.name}</span></div>
-        <div className="flex justify-between"><span className="text-[#8a7f7a]">Date</span><span className="text-[#1a1a1a]">{formattedDate}</span></div>
-        <div className="flex justify-between"><span className="text-[#8a7f7a]">Time</span><span className="text-[#1a1a1a]">{booking.appointment_time}</span></div>
+
+        {/* Editable Date & Time */}
+        {editingDateTime ? (
+          <div className="border border-[#ffabdd]/40 rounded-xl p-3 space-y-2 bg-[#fff0f8]">
+            <p className="text-xs text-[#8a7f7a] uppercase tracking-wider">Edit Date & Time</p>
+            <input
+              type="date"
+              value={editDate}
+              onChange={(e) => setEditDate(e.target.value)}
+              className="input-field text-sm"
+              min={new Date().toISOString().split('T')[0]}
+            />
+            <input
+              type="text"
+              value={editTime}
+              onChange={(e) => setEditTime(e.target.value)}
+              placeholder="e.g. 10:00 AM"
+              className="input-field text-sm"
+            />
+            <div className="flex gap-2">
+              <button onClick={() => setEditingDateTime(false)} className="flex-1 py-1.5 text-xs rounded-full border border-[#ede9e5] text-[#8a7f7a]">Cancel</button>
+              <button onClick={handleSaveDateTime} disabled={submitting} className="flex-1 py-1.5 text-xs rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold disabled:opacity-50">Save</button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between items-center">
+              <span className="text-[#8a7f7a]">{booking.status === 'pending' ? 'Preferred Date' : 'Date'}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[#1a1a1a]">{formattedDate}</span>
+                {['pending', 'confirmed'].includes(booking.status) && (
+                  <button onClick={() => setEditingDateTime(true)} className="text-[#b0a8a4] hover:text-[#c4658f]">
+                    <Pencil size={13} />
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[#8a7f7a]">Time</span>
+              <span className="text-[#1a1a1a]">{booking.appointment_time}</span>
+            </div>
+          </>
+        )}
+
         <div className="flex justify-between">
           <span className="text-[#8a7f7a]">Deposit</span>
           <span className="font-semibold text-[#c4658f]">
-            ${booking.deposit_amount.toFixed(2)} via {booking.payment_method}
+            ${(booking.deposit_amount ?? 0).toFixed(2)} via {booking.payment_method}
           </span>
         </div>
-        {booking.payment_status === 'unpaid' && (
+        {booking.payment_status === 'unpaid' && booking.status === 'confirmed' && (
           <button
             onClick={handleMarkPaid}
             disabled={submitting}
-            className="w-full mt-2 py-2 rounded-xl border border-amber-300 text-amber-600 text-xs hover:bg-amber-50 transition-colors"
+            className="w-full mt-2 py-2 rounded-xl bg-green-50 border border-green-300 text-green-600 text-xs font-semibold hover:bg-green-100 transition-colors"
           >
-            Mark deposit as paid
+            💰 Mark deposit as received
           </button>
+        )}
+        {booking.payment_status === 'deposit_paid' && (
+          <div className="text-xs text-green-600 bg-green-50 rounded-lg px-3 py-2 text-center">
+            ✓ Deposit received
+          </div>
         )}
         {booking.client_notes && (
           <div>
@@ -213,7 +363,7 @@ export default function BookingDetailClient({
         )}
       </div>
 
-      {!['declined', 'completed', 'cancelled'].includes(booking.status) && (
+      {!['declined', 'completed', 'cancelled', 'no_show'].includes(booking.status) && (
         <div className="border border-[#ffabdd]/40 bg-[#fff0f8] rounded-2xl p-4 space-y-4">
           <p className="font-semibold text-sm text-[#1a1a1a]">✦ Set your final price</p>
 
@@ -233,7 +383,7 @@ export default function BookingDetailClient({
           <div className="text-sm space-y-2">
             <div className="flex justify-between text-[#8a7f7a]">
               <span>Deposit paid</span>
-              <span className="text-[#1a1a1a]">${booking.deposit_amount.toFixed(2)}</span>
+              <span className="text-[#1a1a1a]">${(booking.deposit_amount ?? 0).toFixed(2)}</span>
             </div>
             {balanceDue !== null && (
               <div className="flex justify-between font-semibold border-t border-[#ede9e5] pt-2">

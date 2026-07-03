@@ -10,6 +10,26 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
   if (!rawBooking) notFound()
   const booking = rawBooking as unknown as BookingWithRelations
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+
+  // Check for conflicts: confirmed bookings on the same date (excluding this one)
+  let conflictingBookings: { id: string; client_name: string; appointment_time: string }[] = []
+  if (booking.status === 'pending') {
+    const { data: conflicts } = await sb
+      .from('bookings')
+      .select('id, client_name, appointment_time')
+      .eq('appointment_date', booking.appointment_date)
+      .eq('status', 'confirmed')
+      .neq('id', booking.id)
+    conflictingBookings = conflicts || []
+  }
+
+  // Count past bookings by same client email
+  const { count: clientBookingCount } = await sb
+    .from('bookings')
+    .select('id', { count: 'exact', head: true })
+    .eq('client_email', booking.client_email)
+    .neq('id', booking.id)
+
   return (
     <div className="px-4 py-6">
       <div className="flex items-center gap-3 mb-6">
@@ -19,7 +39,12 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
           <p className="text-[#8a7f7a] text-xs">{booking.client_name} · {(booking.services as { name: string } | null)?.name} · {new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
         </div>
       </div>
-      <BookingDetailClient booking={booking} supabaseUrl={supabaseUrl} />
+      <BookingDetailClient
+        booking={booking}
+        supabaseUrl={supabaseUrl}
+        conflictingBookings={conflictingBookings}
+        clientBookingCount={clientBookingCount ?? 0}
+      />
     </div>
   )
 }

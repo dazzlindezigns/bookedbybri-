@@ -55,16 +55,16 @@ function infoRow(label: string, value: string): string {
 export function bookingReceived(clientName: string, serviceName: string, date: string, time: string): string {
   return wrapEmail(`
     <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Request received! ✨</h1>
-    <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, we got your booking request and Bri will review it shortly.</p>
+    <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, we got your request and Bri will review it within 24 hours.</p>
     <div style="background: #fff0f8; border: 1px solid #ffe0f2; border-radius: 12px; padding: 20px; margin-bottom: 28px;">
       <table style="width: 100%; border-collapse: collapse;">
-        ${infoRow('Service', serviceName)}
-        ${infoRow('Date', date)}
-        ${infoRow('Time', time)}
+        ${infoRow('Style', serviceName)}
+        ${infoRow('Preferred Date', date)}
+        ${infoRow('Preferred Time', time)}
         ${infoRow('Status', 'Pending Review')}
       </table>
     </div>
-    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0;">Bri will send you a quote once she&apos;s reviewed your request. You&apos;ll receive another email with your final price and deposit details.</p>
+    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0;">Bri will reach out once she&apos;s reviewed your request — either to approve, ask questions, or suggest an alternative time. Stay tuned! 💕</p>
   `)
 }
 
@@ -75,7 +75,7 @@ export function quoteReady(clientName: string, serviceName: string, date: string
     ${message ? `<div style="border-left: 3px solid #ffabdd; padding: 12px 16px; background: #fff0f8; border-radius: 0 8px 8px 0; margin-bottom: 28px;"><p style="color: #7a2e58; font-size: 14px; font-style: italic; margin: 0;">&ldquo;${message}&rdquo;</p><p style="color: #c4658f; font-size: 12px; margin: 8px 0 0;">— Brizee Bri</p></div>` : ''}
     <div style="background: #fff0f8; border: 1px solid #ffe0f2; border-radius: 12px; padding: 20px; margin-bottom: 28px;">
       <table style="width: 100%; border-collapse: collapse;">
-        ${infoRow('Service', serviceName)}
+        ${infoRow('Style', serviceName)}
         ${infoRow('Date', date)}
         ${infoRow('Time', time)}
         ${infoRow('Total Price', `$${finalPrice.toFixed(2)}`)}
@@ -87,30 +87,31 @@ export function quoteReady(clientName: string, serviceName: string, date: string
   `)
 }
 
-export function bookingConfirmed(clientName: string, serviceName: string, date: string, time: string, depositPaid: number, balanceDue: number): string {
+export function bookingConfirmed(clientName: string, serviceName: string, date: string, time: string, depositPaid: number, balanceDue: number, cancelUrl?: string): string {
   return wrapEmail(`
     <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">You&apos;re confirmed! 🎉</h1>
     <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, your appointment is officially confirmed. We can&apos;t wait to see you!</p>
     <div style="background: #fff0f8; border: 1px solid #ffe0f2; border-radius: 12px; padding: 20px; margin-bottom: 28px;">
       <table style="width: 100%; border-collapse: collapse;">
-        ${infoRow('Service', serviceName)}
+        ${infoRow('Style', serviceName)}
         ${infoRow('Date', date)}
         ${infoRow('Time', time)}
         ${infoRow('Deposit Paid', `$${depositPaid.toFixed(2)}`)}
         ${balanceDue > 0 ? infoRow('Balance Due', `$${balanceDue.toFixed(2)} on appointment day`) : ''}
       </table>
     </div>
-    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0;">Need to make changes? Please reach out at least 48 hours before your appointment. See you soon! 💕</p>
+    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">A calendar invite is attached to this email — add it to your calendar so you don&apos;t forget! 💕</p>
+    <p style="color: #8a8a8a; font-size: 13px; line-height: 1.6; margin: 0;"><strong style="color: #1a1a1a;">Cancellation policy:</strong> Deposits are non-refundable. If you need to cancel, please do so as early as possible.${cancelUrl ? ` <a href="${cancelUrl}" style="color: #c4658f;">Cancel this appointment</a>` : ''}</p>
   `)
 }
 
-export function bookingAccepted(clientName: string, serviceName: string, date: string, time: string, depositAmount: number, paymentInstructions: string): string {
+export function bookingAccepted(clientName: string, serviceName: string, date: string, time: string, depositAmount: number, paymentInstructions: string, cancelUrl?: string): string {
   return wrapEmail(`
     <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">You&apos;re approved! 🎉</h1>
     <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, Bri has reviewed your request and would love to have you!</p>
     <div style="background: #fff0f8; border: 1px solid #ffe0f2; border-radius: 12px; padding: 20px; margin-bottom: 28px;">
       <table style="width: 100%; border-collapse: collapse;">
-        ${infoRow('Service', serviceName)}
+        ${infoRow('Style', serviceName)}
         ${infoRow('Date', date)}
         ${infoRow('Time', time)}
         ${infoRow('Deposit due', `$${depositAmount.toFixed(2)}`)}
@@ -120,7 +121,8 @@ export function bookingAccepted(clientName: string, serviceName: string, date: s
     <div style="background: #f2f2f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 28px;">
       <p style="color: #3a3a3a; font-size: 14px; margin: 0; line-height: 1.8;">${paymentInstructions}</p>
     </div>
-    <p style="color: #8a8a8a; font-size: 13px; margin: 0;">Once your deposit is received you&apos;ll get a final confirmation with your calendar invite. Spots aren&apos;t held until the deposit is paid 💕</p>
+    <p style="color: #8a8a8a; font-size: 13px; margin: 0 0 12px;">Once your deposit is received you&apos;ll get a final confirmation with your calendar invite. Spots aren&apos;t held until the deposit is paid 💕</p>
+    ${cancelUrl ? `<p style="color: #b0a8a4; font-size: 12px; margin: 0;">Changed your mind? <a href="${cancelUrl}" style="color: #c4658f;">Cancel this request</a></p>` : ''}
   `)
 }
 
@@ -130,22 +132,51 @@ export function bookingDeclined(clientName: string, serviceName: string, decline
     <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, we appreciate your interest in booking for ${serviceName}.</p>
     <p style="color: #3a3a3a; font-size: 15px; line-height: 1.6; margin: 0 0 16px;">Unfortunately, Bri is unable to accommodate your request at this time.</p>
     ${declineReason ? `<div style="background: #f2f2f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 28px;"><p style="color: #3a3a3a; font-size: 14px; margin: 0; line-height: 1.6;">${declineReason}</p></div>` : ''}
-    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0;">We&apos;d love to have you back — please check availability again in the future!</p>
+    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0;">We&apos;d love to have you back — feel free to submit a new request when you&apos;re ready!</p>
   `)
 }
 
-export function appointmentReminder(clientName: string, serviceName: string, date: string, time: string, balanceDue: number): string {
+export function appointmentReminder(clientName: string, serviceName: string, date: string, time: string, balanceDue: number, cancelUrl?: string): string {
   return wrapEmail(`
     <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">See you tomorrow! ⏰</h1>
     <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, just a friendly reminder about your appointment tomorrow!</p>
     <div style="background: #fff0f8; border: 1px solid #ffe0f2; border-radius: 12px; padding: 20px; margin-bottom: 28px;">
       <table style="width: 100%; border-collapse: collapse;">
-        ${infoRow('Service', serviceName)}
+        ${infoRow('Style', serviceName)}
         ${infoRow('Date', date)}
         ${infoRow('Time', time)}
-        ${balanceDue > 0 ? infoRow('Balance Due', `$${balanceDue.toFixed(2)}`) : infoRow('Payment', 'Fully paid ✓')}
+        ${balanceDue > 0 ? infoRow('Balance Due', `$${balanceDue.toFixed(2)} — bring cash or card`) : infoRow('Payment', 'Fully paid ✓')}
       </table>
     </div>
-    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0;">Can&apos;t make it? Please contact Bri as soon as possible. We&apos;re excited to slay your look tomorrow! 💕</p>
+    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">We&apos;re so excited to slay your look tomorrow! 💕</p>
+    ${cancelUrl ? `<p style="color: #b0a8a4; font-size: 12px; margin: 0;">Need to cancel? <a href="${cancelUrl}" style="color: #c4658f;">Cancel appointment</a> — note that deposits are non-refundable.</p>` : ''}
+  `)
+}
+
+export function appointmentCancelled(clientName: string, serviceName: string, date: string, cancelledBy: 'client' | 'admin' = 'client'): string {
+  return wrapEmail(`
+    <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Appointment Cancelled</h1>
+    <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, your ${serviceName} appointment has been cancelled.</p>
+    <div style="background: #f2f2f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 28px;">
+      <p style="color: #3a3a3a; font-size: 14px; margin: 0; line-height: 1.6;">
+        <strong>Service:</strong> ${serviceName}<br>
+        <strong>Date:</strong> ${date}<br>
+        <strong>Cancelled by:</strong> ${cancelledBy === 'client' ? 'You' : 'Bri'}
+      </p>
+    </div>
+    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0 0 12px;"><strong>Deposit policy:</strong> Per our booking policy, deposits are non-refundable.</p>
+    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0;">We hope to see you again soon! Feel free to submit a new request whenever you&apos;re ready. 💕</p>
+  `)
+}
+
+export function reviewRequest(clientName: string, serviceName: string, googleReviewUrl: string): string {
+  return wrapEmail(`
+    <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">How did it go? 💕</h1>
+    <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, thank you so much for coming in for your ${serviceName}!</p>
+    <p style="color: #3a3a3a; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">We hope you&apos;re obsessed with your new look! If you loved your experience, leaving a quick Google review would mean the world to Bri — it helps other clients find her and supports her small business. 🌟</p>
+    <div style="text-align: center; margin-bottom: 28px;">
+      <a href="${googleReviewUrl}" style="display: inline-block; background: #ffabdd; color: #1a1a1a; font-size: 15px; font-weight: 700; padding: 14px 32px; border-radius: 50px; text-decoration: none;">Leave a Google Review ⭐</a>
+    </div>
+    <p style="color: #8a8a8a; font-size: 13px; text-align: center; margin: 0;">It only takes 30 seconds and makes a huge difference. Thank you! 💗</p>
   `)
 }

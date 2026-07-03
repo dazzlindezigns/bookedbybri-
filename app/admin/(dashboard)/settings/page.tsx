@@ -209,6 +209,10 @@ export default function SettingsPage() {
         </button>
       </div>
 
+      <Section title="Booking" />
+      <Field label="Google Review link" k="google_review_url" placeholder="https://g.page/r/..." />
+      <p className="text-xs text-[#b0a8a4] -mt-2 mb-4">Sent to clients after their appointment is marked complete.</p>
+
       <Section title="Integrations" />
       <div className="space-y-2 mb-6">
         <a

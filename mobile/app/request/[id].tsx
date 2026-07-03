@@ -19,6 +19,7 @@ const STATUS_COLOR: Record<BookingStatus, string> = {
   declined: Colors.red,
   completed: Colors.muted,
   cancelled: Colors.muted,
+  no_show: '#f97316',
 }
 
 function formatDate(dateStr: string) {
@@ -129,6 +130,51 @@ export default function RequestDetailScreen() {
     ])
   }
 
+  const handleMarkComplete = () => {
+    Alert.alert('Mark as completed?', 'This will send a Google review request email to the client.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Mark Complete', onPress: async () => {
+          setActing(true)
+          const res = await api.patchBooking(id!, { status: 'completed' })
+          if (!res.error) setBooking((b) => b ? { ...b, status: 'completed' } : b)
+          setActing(false)
+        },
+      },
+    ])
+  }
+
+  const handleMarkNoShow = () => {
+    Alert.alert('Mark as no-show?', 'The client will not be notified.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'No Show', style: 'destructive', onPress: async () => {
+          setActing(true)
+          const res = await api.patchBooking(id!, { status: 'no_show' })
+          if (!res.error) setBooking((b) => b ? { ...b, status: 'no_show' } : b)
+          setActing(false)
+        },
+      },
+    ])
+  }
+
+  const handleCancelBooking = () => {
+    Alert.alert('Cancel appointment?', 'The client will be notified. Deposits are non-refundable.', [
+      { text: 'Keep', style: 'cancel' },
+      {
+        text: 'Cancel Appointment', style: 'destructive', onPress: async () => {
+          setActing(true)
+          const res = await api.patchBooking(id!, { status: 'cancelled' })
+          if (!res.error) {
+            setBooking((b) => b ? { ...b, status: 'cancelled' } : b)
+            router.back()
+          }
+          setActing(false)
+        },
+      },
+    ])
+  }
+
   if (loading) {
     return (
       <View style={[styles.safe, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -146,7 +192,8 @@ export default function RequestDetailScreen() {
   }
 
   const isPending = booking.status === 'pending'
-  const isAwaitingDeposit = booking.status === 'confirmed' && booking.payment_status !== 'deposit_paid'
+  const isConfirmed = booking.status === 'confirmed'
+  const isAwaitingDeposit = isConfirmed && booking.payment_status !== 'deposit_paid'
   const statusColor = STATUS_COLOR[booking.status]
   const images = booking.booking_images ?? []
 
@@ -292,6 +339,23 @@ export default function RequestDetailScreen() {
           </View>
         )}
 
+        {/* Confirmed actions — complete / no-show / cancel */}
+        {isConfirmed && !declining && (
+          <View style={styles.confirmedActions}>
+            <View style={styles.actionRow}>
+              <TouchableOpacity style={styles.completeBtn} onPress={handleMarkComplete} disabled={acting}>
+                <Text style={styles.completeBtnText}>Mark Complete ✓</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.noShowBtn} onPress={handleMarkNoShow} disabled={acting}>
+                <Text style={styles.noShowBtnText}>No-show</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity style={styles.cancelApptBtn} onPress={handleCancelBooking} disabled={acting}>
+              <Text style={styles.cancelApptBtnText}>Cancel appointment</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Message input */}
         {!declining && (
           <View style={styles.inputRow}>
@@ -415,4 +479,22 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.pink, alignItems: 'center', justifyContent: 'center',
   },
   sendBtnText: { fontSize: 18, fontWeight: '700', color: Colors.text },
+  confirmedActions: {
+    backgroundColor: Colors.white, borderTopWidth: 1, borderTopColor: Colors.border, paddingBottom: 8,
+  },
+  completeBtn: {
+    flex: 2, paddingVertical: 14, borderRadius: 100,
+    backgroundColor: Colors.green, alignItems: 'center',
+  },
+  completeBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  noShowBtn: {
+    flex: 1, paddingVertical: 14, borderRadius: 100,
+    borderWidth: 1, borderColor: '#fed7aa', alignItems: 'center',
+  },
+  noShowBtnText: { fontSize: 14, fontWeight: '600', color: '#f97316' },
+  cancelApptBtn: {
+    marginHorizontal: 16, marginBottom: 6, paddingVertical: 10, borderRadius: 100,
+    borderWidth: 1, borderColor: '#fecaca', alignItems: 'center',
+  },
+  cancelApptBtnText: { fontSize: 13, color: Colors.red },
 })

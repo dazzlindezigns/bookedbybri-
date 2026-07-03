@@ -3,8 +3,10 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase'
 import { sendGmail } from '@/lib/google'
-import { bookingAccepted, bookingDeclined } from '@/lib/email-templates'
+import { bookingAccepted, bookingDeclined, appointmentCancelled, reviewRequest } from '@/lib/email-templates'
 import { handleDepositReceived } from '@/lib/deposit'
+
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://brizeebri.com'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const sb = createSupabaseAdminClient()
@@ -34,6 +36,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   const svc = booking.services as { name: string; duration_minutes: number } | null
   const serviceName = svc?.name ?? 'your appointment'
+  const cancelUrl = `${SITE_URL}/booking/${params.id}/cancel`
+
+  const dateStr = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric',
+  })
 
   // Bri accepted the request — email client to pay deposit
   if (updates.status === 'confirmed') {
@@ -64,10 +71,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           ? methods.join('<br>')
           : 'Bri will send you payment instructions shortly.'
 
-        const dateStr = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', {
-          weekday: 'long', month: 'long', day: 'numeric',
-        })
-
         await sendGmail(
           tokenRow.value,
           booking.client_email,
@@ -78,7 +81,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             dateStr,
             booking.appointment_time,
             booking.deposit_amount ?? 0,
-            paymentInstructions
+            paymentInstructions,
+            cancelUrl
           )
         )
       }
@@ -101,6 +105,40 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           booking.client_email,
           'Update on your booking — Braids by Brizee Bri',
           bookingDeclined(booking.client_name, serviceName, declineReason)
+        )
+      }
+    } catch {}
+  }
+
+  // Booking cancelled (by admin) — email client
+  if (updates.status === 'cancelled') {
+    try {
+      const { data: tokenRow } = await sb
+        .from('admin_settings').select('value').eq('key', 'google_refresh_token').maybeSingle()
+      if (tokenRow?.value) {
+        await sendGmail(
+          tokenRow.value,
+          booking.client_email,
+          'Appointment Cancelled — Braids by Brizee Bri',
+          appointmentCancelled(booking.client_name, serviceName, dateStr, 'admin')
+        )
+      }
+    } catch {}
+  }
+
+  // Appointment completed — send Google review request
+  if (updates.status === 'completed') {
+    try {
+      const [{ data: tokenRow }, { data: reviewRow }] = await Promise.all([
+        sb.from('admin_settings').select('value').eq('key', 'google_refresh_token').maybeSingle(),
+        sb.from('admin_settings').select('value').eq('key', 'google_review_url').maybeSingle(),
+      ])
+      if (tokenRow?.value && reviewRow?.value) {
+        await sendGmail(
+          tokenRow.value,
+          booking.client_email,
+          'How did it go? — Braids by Brizee Bri',
+          reviewRequest(booking.client_name, serviceName, reviewRow.value)
         )
       }
     } catch {}

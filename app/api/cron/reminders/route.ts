@@ -5,6 +5,8 @@ import { createSupabaseAdminClient } from '@/lib/supabase'
 import { sendGmail } from '@/lib/google'
 import { appointmentReminder } from '@/lib/email-templates'
 
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://brizeebri.com'
+
 export async function GET(req: NextRequest) {
   const secret = req.headers.get('x-cron-secret') || req.nextUrl.searchParams.get('secret')
   if (secret !== process.env.CRON_SECRET) {
@@ -43,18 +45,23 @@ export async function GET(req: NextRequest) {
     const serviceName = (booking.services as { name: string } | null)?.name || 'your appointment'
     const balanceDue =
       booking.final_price !== null ? booking.final_price - booking.deposit_amount : 0
+    const dateStr = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric',
+    })
+    const cancelUrl = `${SITE_URL}/booking/${booking.id}/cancel`
 
     try {
       await sendGmail(
         settings.value,
         booking.client_email,
-        `See you tomorrow! — Braids by Brizee Bri`,
+        'See you tomorrow! — Braids by Brizee Bri',
         appointmentReminder(
           booking.client_name,
           serviceName,
-          booking.appointment_date,
+          dateStr,
           booking.appointment_time,
-          balanceDue
+          balanceDue,
+          cancelUrl
         )
       )
       await sb

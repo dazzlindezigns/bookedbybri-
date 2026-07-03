@@ -3,6 +3,8 @@ import { createCalendarEvent, sendGmailWithIcs } from './google'
 import { generateIcs, calendarTimes } from './ics'
 import { bookingConfirmed } from './email-templates'
 
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://brizeebri.com'
+
 export async function handleDepositReceived(bookingId: string) {
   const sb = createSupabaseAdminClient()
 
@@ -58,7 +60,7 @@ export async function handleDepositReceived(bookingId: string) {
       tokenRow.value,
       booking.client_email,
       "You're confirmed! — Braids by Brizee Bri",
-      bookingConfirmed(booking.client_name, serviceName, dateStr, booking.appointment_time, depositPaid, balanceDue),
+      bookingConfirmed(booking.client_name, serviceName, dateStr, booking.appointment_time, depositPaid, balanceDue, `${SITE_URL}/booking/${bookingId}/cancel`),
       ics
     )
   } catch {}

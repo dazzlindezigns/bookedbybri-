@@ -8,14 +8,25 @@ const STATUS_STYLES: Record<string, string> = {
   declined: 'bg-red-500/20 text-red-400',
   completed: 'bg-green-500/20 text-green-400',
   cancelled: 'bg-gray-500/20 text-gray-400',
+  no_show: 'bg-orange-500/20 text-orange-400',
 }
 
 const STATUS_LABELS: Record<string, string> = {
   pending: 'Pending Review',
-  confirmed: 'Confirmed',
+  confirmed: 'Approved — Awaiting Deposit',
   declined: 'Declined',
   completed: 'Completed',
   cancelled: 'Cancelled',
+  no_show: 'No Show',
+}
+
+const DATE_LABEL: Record<string, string> = {
+  pending: 'Preferred Date',
+  confirmed: 'Date',
+  completed: 'Date',
+  declined: 'Requested Date',
+  cancelled: 'Date',
+  no_show: 'Date',
 }
 
 export default async function BookingStatusPage({ params }: { params: { id: string } }) {
@@ -41,6 +52,8 @@ export default async function BookingStatusPage({ params }: { params: { id: stri
       ? booking.final_price - booking.deposit_amount
       : null
 
+  const canCancel = ['pending', 'confirmed'].includes(booking.status)
+
   return (
     <div className="min-h-screen bg-[#1a1a1a] text-white font-sans px-4 py-12">
       <div className="max-w-sm mx-auto">
@@ -49,7 +62,7 @@ export default async function BookingStatusPage({ params }: { params: { id: stri
           <p className="font-cormorant italic text-4xl text-[#ffabdd]">Brizee Bri</p>
         </div>
 
-        <h1 className="text-xl font-bold mb-6">Your Booking</h1>
+        <h1 className="text-xl font-bold mb-6">Your Request</h1>
 
         <div className="bg-[#222] border border-[#3a3a3a] rounded-2xl p-5 mb-4">
           <div className="flex items-center justify-between mb-4">
@@ -65,7 +78,7 @@ export default async function BookingStatusPage({ params }: { params: { id: stri
               <span className="font-medium">{service?.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-white/50">Date</span>
+              <span className="text-white/50">{DATE_LABEL[booking.status] || 'Date'}</span>
               <span className="font-medium">{formattedDate}</span>
             </div>
             <div className="flex justify-between">
@@ -75,13 +88,31 @@ export default async function BookingStatusPage({ params }: { params: { id: stri
           </div>
         </div>
 
+        {booking.status === 'confirmed' && (
+          <div className="bg-[#ffabdd]/10 border border-[#ffabdd]/30 rounded-2xl p-4 mb-4">
+            <p className="text-[#ffabdd] font-semibold text-sm mb-1">Your spot is approved! 🎉</p>
+            <p className="text-white/60 text-xs">
+              Send your ${booking.deposit_amount?.toFixed(2)} deposit to confirm your appointment.
+            </p>
+          </div>
+        )}
+
         <div className="bg-[#222] border border-[#3a3a3a] rounded-2xl p-5 mb-4">
           <p className="text-white/50 text-xs uppercase tracking-wider mb-3">Payment</p>
           <div className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-white/50">Deposit paid</span>
-              <span className="font-semibold text-[#ffabdd]">${booking.deposit_amount.toFixed(2)}</span>
-            </div>
+            {booking.payment_status === 'deposit_paid' ? (
+              <div className="flex justify-between">
+                <span className="text-white/50">Deposit</span>
+                <span className="font-semibold text-[#ffabdd]">${booking.deposit_amount.toFixed(2)} ✓ Paid</span>
+              </div>
+            ) : (
+              <div className="flex justify-between">
+                <span className="text-white/50">Deposit</span>
+                <span className="text-white/40 italic text-xs">
+                  {booking.status === 'confirmed' ? `$${booking.deposit_amount?.toFixed(2)} due now` : 'Due after approval'}
+                </span>
+              </div>
+            )}
             {booking.final_price !== null ? (
               <>
                 <div className="flex justify-between">
@@ -111,9 +142,18 @@ export default async function BookingStatusPage({ params }: { params: { id: stri
           </div>
         )}
 
+        {canCancel && (
+          <Link
+            href={`/booking/${booking.id}/cancel`}
+            className="block text-center text-white/30 text-xs hover:text-red-400 transition-colors mt-6 mb-2"
+          >
+            Cancel this request
+          </Link>
+        )}
+
         <Link
           href="/"
-          className="block text-center text-white/40 text-sm hover:text-white transition-colors mt-8"
+          className="block text-center text-white/40 text-sm hover:text-white transition-colors mt-4"
         >
           ← Back to home
         </Link>

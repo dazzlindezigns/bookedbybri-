@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { ChevronLeft, Upload, X, Clock, DollarSign, Check } from 'lucide-react'
+import { ChevronLeft, Upload, X, Clock, DollarSign, Check, Info } from 'lucide-react'
 
 type Service = {
   id: string
@@ -15,9 +15,13 @@ type Service = {
   hair_included: boolean
 }
 
-type TimeSlot = { time: string; available: boolean }
+const STEP_NAMES = ['Choose Style', 'Preferred Date & Time', 'Your Info', 'Inspiration', 'Payment Preference']
 
-const STEP_NAMES = ['Choose Style', 'Date & Time', 'Your Info', 'Inspiration', 'Payment']
+const PRESET_TIMES = [
+  '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+  '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
+  '6:00 PM', '7:00 PM', '8:00 PM',
+]
 
 export default function BookPage() {
   const router = useRouter()
@@ -27,9 +31,6 @@ export default function BookPage() {
   const [selectedDate, setSelectedDate] = useState<string>('')
   const [selectedTime, setSelectedTime] = useState<string>('')
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [availableDays, setAvailableDays] = useState<Set<string>>(new Set())
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([])
-  const [loadingSlots, setLoadingSlots] = useState(false)
   const [clientName, setClientName] = useState('')
   const [clientEmail, setClientEmail] = useState('')
   const [clientPhone, setClientPhone] = useState('')
@@ -65,31 +66,6 @@ export default function BookPage() {
       }
     }
   }, [selectedService, settings])
-
-  const fetchAvailableDays = useCallback(async (month: Date) => {
-    const monthStr = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}`
-    const res = await fetch(`/api/availability?month=${monthStr}`)
-    const data = await res.json()
-    setAvailableDays(new Set(data.availableDays || []))
-  }, [])
-
-  useEffect(() => {
-    fetchAvailableDays(currentMonth)
-  }, [currentMonth, fetchAvailableDays])
-
-  const fetchTimeSlots = async (date: string) => {
-    setLoadingSlots(true)
-    const res = await fetch(`/api/availability?date=${date}`)
-    const data = await res.json()
-    setTimeSlots(data.slots || [])
-    setLoadingSlots(false)
-  }
-
-  const handleDateSelect = (dateStr: string) => {
-    setSelectedDate(dateStr)
-    setSelectedTime('')
-    fetchTimeSlots(dateStr)
-  }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
@@ -187,6 +163,16 @@ export default function BookPage() {
         </div>
       </div>
 
+      {/* Request notice banner */}
+      <div className="bg-[#fff8e1] border-b border-[#ffe082] px-4 py-2 max-w-lg mx-auto">
+        <div className="flex items-start gap-2 max-w-lg mx-auto">
+          <Info size={14} className="text-[#f59e0b] mt-0.5 flex-shrink-0" />
+          <p className="text-xs text-[#92400e]">
+            This is a <strong>booking request</strong> — not a confirmed appointment. Bri will review and reach out within 24 hours.
+          </p>
+        </div>
+      </div>
+
       <div className="max-w-lg mx-auto px-4 py-6">
         {/* Step 1: Choose Style */}
         {step === 1 && (
@@ -242,10 +228,13 @@ export default function BookPage() {
           </div>
         )}
 
-        {/* Step 2: Date & Time */}
+        {/* Step 2: Preferred Date & Time */}
         {step === 2 && (
           <div>
-            <h2 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-6">Pick a Date</h2>
+            <h2 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-2">Preferred Date</h2>
+            <p className="text-sm text-[#8a7f7a] mb-5">
+              Pick your ideal date and time. Bri will confirm or suggest alternatives after reviewing your request.
+            </p>
             <div className="bg-white border border-[#ede9e5] rounded-2xl p-4 mb-4">
               <div className="flex items-center justify-between mb-4">
                 <button
@@ -274,18 +263,17 @@ export default function BookPage() {
                   if (!day) return <div key={idx} />
                   const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
                   const dayDate = new Date(dateStr + 'T12:00:00')
-                  const isPast = dayDate < today
-                  const isAvailable = availableDays.has(dateStr)
+                  const isPast = dayDate <= today
                   const isSelected = selectedDate === dateStr
                   return (
                     <button
                       key={idx}
-                      disabled={isPast || !isAvailable}
-                      onClick={() => handleDateSelect(dateStr)}
+                      disabled={isPast}
+                      onClick={() => { setSelectedDate(dateStr); setSelectedTime('') }}
                       className={`aspect-square rounded-full flex items-center justify-center text-sm transition-all duration-150 ${
                         isSelected
                           ? 'bg-[#ffabdd] text-[#1a1a1a] font-semibold'
-                          : isPast || !isAvailable
+                          : isPast
                           ? 'text-[#d4cdc9] cursor-not-allowed'
                           : 'hover:bg-[#fff0f8] text-[#1a1a1a] cursor-pointer'
                       }`}
@@ -298,35 +286,22 @@ export default function BookPage() {
             </div>
             {selectedDate && (
               <div>
-                <p className="font-semibold mb-3 text-sm text-[#8a7f7a] uppercase tracking-wider">Available times</p>
-                {loadingSlots ? (
-                  <div className="grid grid-cols-3 gap-2">
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i} className="h-10 rounded-xl bg-[#ede9e5] animate-pulse" />
-                    ))}
-                  </div>
-                ) : timeSlots.length > 0 ? (
-                  <div className="grid grid-cols-3 gap-2">
-                    {timeSlots.map((slot) => (
-                      <button
-                        key={slot.time}
-                        disabled={!slot.available}
-                        onClick={() => setSelectedTime(slot.time)}
-                        className={`py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-                          !slot.available
-                            ? 'line-through text-[#d4cdc9] cursor-not-allowed bg-[#f7f5f3]'
-                            : selectedTime === slot.time
-                            ? 'bg-[#ffabdd] text-[#1a1a1a]'
-                            : 'border border-[#ffabdd]/50 text-[#c4658f] hover:bg-[#fff0f8] bg-white'
-                        }`}
-                      >
-                        {slot.time}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-[#b0a8a4] text-sm">No available times for this day.</p>
-                )}
+                <p className="font-semibold mb-3 text-sm text-[#8a7f7a] uppercase tracking-wider">Preferred time</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {PRESET_TIMES.map((time) => (
+                    <button
+                      key={time}
+                      onClick={() => setSelectedTime(time)}
+                      className={`py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+                        selectedTime === time
+                          ? 'bg-[#ffabdd] text-[#1a1a1a]'
+                          : 'border border-[#ffabdd]/50 text-[#c4658f] hover:bg-[#fff0f8] bg-white'
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -353,7 +328,7 @@ export default function BookPage() {
                 <label className="block text-xs text-[#8a7f7a] mb-1.5 uppercase tracking-wider">Notes for Bri (optional)</label>
                 <textarea
                   className="input-field min-h-[100px] resize-none"
-                  placeholder="Any special requests, hair length, concerns..."
+                  placeholder="Hair length, texture, any special requests or questions..."
                   value={clientNotes}
                   onChange={(e) => setClientNotes(e.target.value)}
                 />
@@ -400,14 +375,17 @@ export default function BookPage() {
           </div>
         )}
 
-        {/* Step 5: Payment */}
+        {/* Step 5: Payment Preference */}
         {step === 5 && (
           <div>
-            <h2 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-6">Payment</h2>
+            <h2 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-2">Payment Preference</h2>
+            <p className="text-sm text-[#8a7f7a] mb-5">
+              How would you like to pay your deposit once Bri approves your request?
+            </p>
             <div className="bg-white border border-[#ede9e5] rounded-2xl p-5 mb-6 text-center">
-              <p className="text-xs text-[#8a7f7a] uppercase tracking-wider mb-1">Deposit Required</p>
+              <p className="text-xs text-[#8a7f7a] uppercase tracking-wider mb-1">Estimated Deposit</p>
               <p className="text-4xl font-bold text-[#c4658f]">${depositAmount.toFixed(2)}</p>
-              <p className="text-xs text-[#b0a8a4] mt-1">Secures your appointment</p>
+              <p className="text-xs text-[#b0a8a4] mt-1">Due only after Bri approves your request</p>
             </div>
             <p className="text-sm text-[#8a7f7a] mb-3">Select payment method</p>
             <div className="space-y-2 mb-6">
@@ -460,59 +438,24 @@ export default function BookPage() {
                 </button>
               )}
             </div>
-            {['cashapp', 'zelle', 'applepay'].includes(paymentMethod) && (
-              <div className="p-4 rounded-xl bg-[#fff0f8] border border-[#ffabdd]/40 text-sm mb-4">
-                <p className="font-semibold text-[#c4658f] mb-1">How to pay your deposit</p>
-                {paymentMethod === 'cashapp' && (
-                  <p className="text-[#6b6460]">
-                    Send ${depositAmount.toFixed(2)} to <strong>{settings.cashapp_handle || '$BrizeeBri'}</strong> on CashApp. Bri will confirm once received.
-                  </p>
-                )}
-                {paymentMethod === 'zelle' && (
-                  <p className="text-[#6b6460]">
-                    Send ${depositAmount.toFixed(2)} to <strong>{settings.zelle_contact}</strong> via Zelle. Bri will confirm once received.
-                  </p>
-                )}
-                {paymentMethod === 'applepay' && (
-                  <p className="text-[#6b6460]">
-                    Send ${depositAmount.toFixed(2)} via Apple Pay. Bri will confirm once received.
-                  </p>
-                )}
-                {(() => {
-                  const url = paymentMethod === 'cashapp' ? settings.cashapp_url
-                    : paymentMethod === 'zelle' ? settings.zelle_url
-                    : paymentMethod === 'applepay' ? settings.applepay_url : ''
-                  return url ? (
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-full bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm hover:bg-[#c4658f] hover:text-white transition-all"
-                    >
-                      Open {paymentMethod === 'cashapp' ? 'CashApp' : paymentMethod === 'zelle' ? 'Zelle' : 'Apple Pay'} →
-                    </a>
-                  ) : null
-                })()}
-              </div>
-            )}
             <div className="bg-white border border-[#ede9e5] rounded-2xl p-4 text-sm space-y-2">
-              <p className="text-[#8a7f7a] text-xs uppercase tracking-wider mb-2">Booking Summary</p>
+              <p className="text-[#8a7f7a] text-xs uppercase tracking-wider mb-2">Request Summary</p>
               <div className="flex justify-between">
                 <span className="text-[#8a7f7a]">Service</span>
                 <span className="font-medium text-[#1a1a1a]">{selectedService?.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#8a7f7a]">Date</span>
+                <span className="text-[#8a7f7a]">Preferred Date</span>
                 <span className="font-medium text-[#1a1a1a]">
                   {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#8a7f7a]">Time</span>
+                <span className="text-[#8a7f7a]">Preferred Time</span>
                 <span className="font-medium text-[#1a1a1a]">{selectedTime}</span>
               </div>
               <div className="flex justify-between border-t border-[#ede9e5] pt-2 mt-2">
-                <span className="text-[#8a7f7a]">Deposit</span>
+                <span className="text-[#8a7f7a]">Est. Deposit</span>
                 <span className="font-semibold text-[#c4658f]">${depositAmount.toFixed(2)}</span>
               </div>
             </div>
@@ -534,7 +477,7 @@ export default function BookPage() {
               onClick={handleSubmit}
               className="w-full py-4 rounded-full font-semibold transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed bg-[#ffabdd] text-[#1a1a1a] hover:bg-[#c4658f] hover:text-white"
             >
-              {submitting ? 'Booking...' : 'Complete booking →'}
+              {submitting ? 'Submitting...' : 'Submit Request →'}
             </button>
           )}
         </div>
