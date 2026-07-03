@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase'
 import { sendGmail } from '@/lib/google'
-import { bookingDeclined } from '@/lib/email-templates'
+import { bookingConfirmed, bookingDeclined } from '@/lib/email-templates'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const sb = createSupabaseAdminClient()
@@ -31,16 +31,33 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
+  const { data: settings } = await sb
+    .from('admin_settings')
+    .select('value')
+    .eq('key', 'google_refresh_token')
+    .maybeSingle()
+
+  const serviceName = (booking.services as { name: string } | null)?.name || 'your appointment'
+
+  if (updates.status === 'confirmed') {
+    try {
+      if (settings?.value) {
+        const depositPaid = booking.deposit_amount || 0
+        const balanceDue = booking.final_price ? booking.final_price - depositPaid : 0
+        const dateStr = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+        await sendGmail(
+          settings.value,
+          booking.client_email,
+          "You're confirmed! — Braids by Brizee Bri",
+          bookingConfirmed(booking.client_name, serviceName, dateStr, booking.appointment_time, depositPaid, balanceDue)
+        )
+      }
+    } catch {}
+  }
+
   if (updates.status === 'declined' && declineReason) {
     try {
-      const { data: settings } = await sb
-        .from('admin_settings')
-        .select('value')
-        .eq('key', 'google_refresh_token')
-        .maybeSingle()
-
       if (settings?.value) {
-        const serviceName = (booking.services as { name: string } | null)?.name || 'your appointment'
         await sendGmail(
           settings.value,
           booking.client_email,
@@ -48,9 +65,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           bookingDeclined(booking.client_name, serviceName, declineReason)
         )
       }
-    } catch {
-      // Email not critical
-    }
+    } catch {}
   }
 
   return NextResponse.json(booking)
