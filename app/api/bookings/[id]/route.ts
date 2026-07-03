@@ -2,9 +2,9 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase'
-import { createCalendarEvent, sendGmail, sendGmailWithIcs } from '@/lib/google'
-import { bookingConfirmed, bookingDeclined } from '@/lib/email-templates'
-import { generateIcs, calendarTimes } from '@/lib/ics'
+import { sendGmail } from '@/lib/google'
+import { bookingAccepted, bookingDeclined } from '@/lib/email-templates'
+import { handleDepositReceived } from '@/lib/deposit'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const sb = createSupabaseAdminClient()
@@ -32,64 +32,72 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  const { data: settings } = await sb
-    .from('admin_settings')
-    .select('value')
-    .eq('key', 'google_refresh_token')
-    .maybeSingle()
-
   const svc = booking.services as { name: string; duration_minutes: number } | null
-  const serviceName = svc?.name || 'your appointment'
-  const durationMinutes = svc?.duration_minutes || 180
+  const serviceName = svc?.name ?? 'your appointment'
 
+  // Bri accepted the request — email client to pay deposit
   if (updates.status === 'confirmed') {
     try {
-      if (settings?.value) {
-        const depositPaid = booking.deposit_amount || 0
-        const balanceDue = booking.final_price ? booking.final_price - depositPaid : 0
-        const dateStr = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+      const [{ data: tokenRow }, { data: settingsRows }] = await Promise.all([
+        sb.from('admin_settings').select('value').eq('key', 'google_refresh_token').maybeSingle(),
+        sb.from('admin_settings').select('key, value').in('key', [
+          'cashapp_handle', 'cashapp_url', 'zelle_contact', 'zelle_url',
+          'applepay_url', 'cashapp_enabled', 'zelle_enabled', 'applepay_enabled', 'stripe_enabled',
+        ]),
+      ])
 
-        // Add to Bri's Google Calendar
-        const { startDateTime, endDateTime } = calendarTimes(booking.appointment_date, booking.appointment_time, durationMinutes)
-        const calEvent = await createCalendarEvent(settings.value, {
-          summary: `${serviceName} — ${booking.client_name}`,
-          description: `Phone: ${booking.client_phone}\nEmail: ${booking.client_email}${booking.client_notes ? `\nNotes: ${booking.client_notes}` : ''}`,
-          startDateTime,
-          endDateTime,
+      if (tokenRow?.value) {
+        const cfg: Record<string, string> = {}
+        settingsRows?.forEach((r) => { cfg[r.key] = r.value })
+
+        const methods: string[] = []
+        if (cfg.cashapp_enabled === 'true' && cfg.cashapp_handle)
+          methods.push(`CashApp: <strong>${cfg.cashapp_handle}</strong>${cfg.cashapp_url ? ` — <a href="${cfg.cashapp_url}">Pay now</a>` : ''}`)
+        if (cfg.zelle_enabled === 'true' && cfg.zelle_contact)
+          methods.push(`Zelle: <strong>${cfg.zelle_contact}</strong>${cfg.zelle_url ? ` — <a href="${cfg.zelle_url}">Pay now</a>` : ''}`)
+        if (cfg.applepay_enabled === 'true' && cfg.applepay_url)
+          methods.push(`Apple Pay: <a href="${cfg.applepay_url}">Pay now</a>`)
+        if (cfg.stripe_enabled === 'true')
+          methods.push('Card: a payment link will be sent separately')
+
+        const paymentInstructions = methods.length
+          ? methods.join('<br>')
+          : 'Bri will send you payment instructions shortly.'
+
+        const dateStr = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', {
+          weekday: 'long', month: 'long', day: 'numeric',
         })
-        if (calEvent?.id) {
-          await sb.from('bookings').update({ google_calendar_event_id: calEvent.id }).eq('id', params.id)
-        }
 
-        // Send confirmation email with ICS calendar invite
-        const ics = generateIcs({
-          uid: booking.id,
-          summary: `Braids Appointment — ${serviceName}`,
-          description: `Your appointment with Braids by Brizee Bri in Pflugerville, TX`,
-          date: booking.appointment_date,
-          time: booking.appointment_time,
-          durationMinutes,
-          organizerEmail: 'brielle.washington09@gmail.com',
-          attendeeEmail: booking.client_email,
-          attendeeName: booking.client_name,
-        })
-
-        await sendGmailWithIcs(
-          settings.value,
+        await sendGmail(
+          tokenRow.value,
           booking.client_email,
-          "You're confirmed! — Braids by Brizee Bri",
-          bookingConfirmed(booking.client_name, serviceName, dateStr, booking.appointment_time, depositPaid, balanceDue),
-          ics
+          "You're approved! — Braids by Brizee Bri",
+          bookingAccepted(
+            booking.client_name,
+            serviceName,
+            dateStr,
+            booking.appointment_time,
+            booking.deposit_amount ?? 0,
+            paymentInstructions
+          )
         )
       }
     } catch {}
   }
 
+  // Deposit received (manual payment marked by Bri) — add to calendar + send ICS
+  if (updates.payment_status === 'deposit_paid') {
+    await handleDepositReceived(params.id).catch(() => {})
+  }
+
+  // Bri declined — email client with reason
   if (updates.status === 'declined' && declineReason) {
     try {
-      if (settings?.value) {
+      const { data: tokenRow } = await sb
+        .from('admin_settings').select('value').eq('key', 'google_refresh_token').maybeSingle()
+      if (tokenRow?.value) {
         await sendGmail(
-          settings.value,
+          tokenRow.value,
           booking.client_email,
           'Update on your booking — Braids by Brizee Bri',
           bookingDeclined(booking.client_name, serviceName, declineReason)
