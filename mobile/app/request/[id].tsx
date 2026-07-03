@@ -115,6 +115,20 @@ export default function RequestDetailScreen() {
     setActing(false)
   }
 
+  const handleMarkDepositPaid = () => {
+    Alert.alert('Mark deposit as received?', 'This will add the appointment to your calendar and send the client a confirmation.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Confirm', onPress: async () => {
+          setActing(true)
+          const res = await api.patchBooking(id!, { payment_status: 'deposit_paid' })
+          if (!res.error) setBooking((b) => b ? { ...b, payment_status: 'deposit_paid' } : b)
+          setActing(false)
+        },
+      },
+    ])
+  }
+
   if (loading) {
     return (
       <View style={[styles.safe, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -132,6 +146,7 @@ export default function RequestDetailScreen() {
   }
 
   const isPending = booking.status === 'pending'
+  const isAwaitingDeposit = booking.status === 'confirmed' && booking.payment_status !== 'deposit_paid'
   const statusColor = STATUS_COLOR[booking.status]
   const images = booking.booking_images ?? []
 
@@ -250,6 +265,18 @@ export default function RequestDetailScreen() {
           </View>
         )}
 
+        {/* Mark deposit paid */}
+        {isAwaitingDeposit && !declining && (
+          <View style={styles.actionRow}>
+            <TouchableOpacity style={styles.depositBtn} onPress={handleMarkDepositPaid} disabled={acting}>
+              {acting
+                ? <ActivityIndicator color={Colors.white} size="small" />
+                : <Text style={styles.depositBtnText}>💰 Mark deposit received</Text>
+              }
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Accept / Decline */}
         {isPending && !declining && (
           <View style={styles.actionRow}>
@@ -337,6 +364,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingVertical: 10,
     backgroundColor: Colors.white, borderTopWidth: 1, borderTopColor: Colors.border,
   },
+  depositBtn: {
+    flex: 1, paddingVertical: 14, borderRadius: 100,
+    backgroundColor: Colors.green, alignItems: 'center',
+  },
+  depositBtnText: { fontSize: 15, fontWeight: '700', color: Colors.white },
   declineBtn: {
     flex: 1, paddingVertical: 14, borderRadius: 100,
     borderWidth: 1, borderColor: Colors.border, alignItems: 'center',
