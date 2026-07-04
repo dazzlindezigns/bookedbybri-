@@ -39,6 +39,7 @@ export default function BookPage() {
   const [paymentMethod, setPaymentMethod] = useState<string>('')
   const [settings, setSettings] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const [depositAmount, setDepositAmount] = useState(50)
 
   useEffect(() => {
@@ -78,6 +79,7 @@ export default function BookPage() {
 
   const handleSubmit = async () => {
     setSubmitting(true)
+    setSubmitError('')
     try {
       const formData = new FormData()
       formData.append('service_id', selectedService!.id)
@@ -95,7 +97,11 @@ export default function BookPage() {
       const data = await res.json()
       if (data.id) {
         router.push(`/book/confirmed?id=${data.id}&name=${encodeURIComponent(clientName)}&service=${encodeURIComponent(selectedService!.name)}&date=${selectedDate}&time=${encodeURIComponent(selectedTime)}&deposit=${depositAmount}&method=${paymentMethod}`)
+      } else {
+        setSubmitError(data.error || 'Something went wrong. Please try again.')
       }
+    } catch {
+      setSubmitError('Network error. Please check your connection and try again.')
     } finally {
       setSubmitting(false)
     }
@@ -472,13 +478,20 @@ export default function BookPage() {
               Continue →
             </button>
           ) : (
-            <button
-              disabled={!canProceed() || submitting}
-              onClick={handleSubmit}
-              className="w-full py-4 rounded-full font-semibold transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed bg-[#ffabdd] text-[#1a1a1a] hover:bg-[#c4658f] hover:text-white"
-            >
-              {submitting ? 'Submitting...' : 'Submit Request →'}
-            </button>
+            <>
+              {submitError && (
+                <p className="text-red-500 text-sm text-center mb-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                  {submitError}
+                </p>
+              )}
+              <button
+                disabled={!canProceed() || submitting}
+                onClick={handleSubmit}
+                className="w-full py-4 rounded-full font-semibold transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed bg-[#ffabdd] text-[#1a1a1a] hover:bg-[#c4658f] hover:text-white"
+              >
+                {submitting ? 'Submitting...' : 'Submit Request →'}
+              </button>
+            </>
           )}
         </div>
       </div>
