@@ -179,55 +179,40 @@ export default function BookPage() {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-6">
+      <div className="max-w-lg mx-auto px-4 py-6 pb-28">
         {/* Step 1: Choose Style */}
         {step === 1 && (
           <div>
-            <h2 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-6">Choose a Style</h2>
-            <div className="grid grid-cols-1 gap-3">
+            <h2 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-4">Choose a Style</h2>
+            <div className="grid grid-cols-2 gap-2">
               {services.map((svc) => (
                 <button
                   key={svc.id}
                   onClick={() => setSelectedService(svc)}
-                  className={`text-left p-4 rounded-2xl border transition-all duration-200 ${
+                  className={`text-left p-3 rounded-2xl border transition-all duration-200 relative ${
                     selectedService?.id === svc.id
                       ? 'border-[#ffabdd] bg-[#fff0f8]'
                       : 'border-[#ede9e5] bg-white hover:border-[#ffabdd]/50'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <p className="font-semibold text-[#1a1a1a]">{svc.name}</p>
-                      {svc.description && (
-                        <p className="text-[#8a7f7a] text-sm mt-0.5">{svc.description}</p>
-                      )}
-                      <div className="flex items-center gap-3 mt-2 text-xs text-[#b0a8a4]">
-                        <span className="flex items-center gap-1">
-                          <Clock size={11} />
-                          {svc.duration_minutes < 60
-                            ? `${svc.duration_minutes}m`
-                            : `${Math.floor(svc.duration_minutes / 60)}–${Math.floor(svc.duration_minutes / 60) + 1}h`}
-                        </span>
-                        {svc.hair_included && <span>Hair included</span>}
-                      </div>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      {svc.requires_consultation ? (
-                        <span className="text-xs px-2 py-1 rounded-full bg-[#f7f5f3] text-[#8a7f7a] border border-[#ede9e5]">
-                          Consultation
-                        </span>
-                      ) : svc.base_price ? (
-                        <span className="font-semibold text-[#c4658f] flex items-center gap-0.5">
-                          <DollarSign size={13} />{svc.base_price}
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
                   {selectedService?.id === svc.id && (
-                    <div className="mt-2 flex justify-end">
-                      <Check size={16} className="text-[#ffabdd]" />
-                    </div>
+                    <Check size={14} className="text-[#ffabdd] absolute top-2.5 right-2.5" />
                   )}
+                  <p className="font-semibold text-[#1a1a1a] text-sm leading-tight pr-5">{svc.name}</p>
+                  <div className="flex items-center gap-1 mt-1.5 text-[10px] text-[#b0a8a4]">
+                    <Clock size={9} />
+                    {svc.duration_minutes < 60
+                      ? `${svc.duration_minutes}m`
+                      : `${Math.floor(svc.duration_minutes / 60)}–${Math.floor(svc.duration_minutes / 60) + 1}h`}
+                    {svc.hair_included && <span className="ml-1">· Hair incl.</span>}
+                  </div>
+                  <div className="mt-1.5">
+                    {svc.requires_consultation ? (
+                      <span className="text-[10px] text-[#8a7f7a]">Consultation</span>
+                    ) : svc.base_price ? (
+                      <span className="text-sm font-semibold text-[#c4658f]">${svc.base_price}</span>
+                    ) : null}
+                  </div>
                 </button>
               ))}
             </div>
@@ -468,30 +453,32 @@ export default function BookPage() {
           </div>
         )}
 
-        <div className="mt-8 pb-8">
+      </div>
+
+      {/* Sticky bottom action */}
+      <div className="fixed bottom-0 left-0 right-0 z-20 px-4 pb-6 pt-3 bg-gradient-to-t from-[#f7f5f3] via-[#f7f5f3]/95 to-transparent">
+        <div className="max-w-lg mx-auto">
+          {submitError && (
+            <p className="text-red-500 text-sm text-center mb-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+              {submitError}
+            </p>
+          )}
           {step < 5 ? (
             <button
               disabled={!canProceed()}
               onClick={() => setStep((s) => s + 1)}
-              className="w-full py-4 rounded-full font-semibold transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed bg-[#1a1a1a] text-white hover:bg-[#ffabdd] hover:text-[#1a1a1a]"
+              className="w-full py-4 rounded-full font-semibold transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed bg-[#1a1a1a] text-white hover:bg-[#ffabdd] hover:text-[#1a1a1a] shadow-lg"
             >
               Continue →
             </button>
           ) : (
-            <>
-              {submitError && (
-                <p className="text-red-500 text-sm text-center mb-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-                  {submitError}
-                </p>
-              )}
-              <button
-                disabled={!canProceed() || submitting}
-                onClick={handleSubmit}
-                className="w-full py-4 rounded-full font-semibold transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed bg-[#ffabdd] text-[#1a1a1a] hover:bg-[#c4658f] hover:text-white"
-              >
-                {submitting ? 'Submitting...' : 'Submit Request →'}
-              </button>
-            </>
+            <button
+              disabled={!canProceed() || submitting}
+              onClick={handleSubmit}
+              className="w-full py-4 rounded-full font-semibold transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed bg-[#ffabdd] text-[#1a1a1a] hover:bg-[#c4658f] hover:text-white shadow-lg"
+            >
+              {submitting ? 'Submitting...' : 'Submit Request →'}
+            </button>
           )}
         </div>
       </div>
