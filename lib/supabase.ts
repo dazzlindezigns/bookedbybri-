@@ -203,6 +203,31 @@ export type Database = {
         Update: Partial<Database['braids']['Tables']['push_subscriptions']['Insert']>
         Relationships: []
       }
+      booking_messages: {
+        Row: {
+          id: string
+          booking_id: string
+          direction: 'inbound' | 'outbound'
+          body: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          booking_id: string
+          direction: 'inbound' | 'outbound'
+          body: string
+        }
+        Update: Partial<Database['braids']['Tables']['booking_messages']['Insert']>
+        Relationships: [
+          {
+            foreignKeyName: "booking_messages_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
