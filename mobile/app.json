@@ -14,7 +14,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.bookedbybri.admin",
-      "buildNumber": "1"
+      "buildNumber": "2"
     },
     "plugins": [
       "expo-router",
