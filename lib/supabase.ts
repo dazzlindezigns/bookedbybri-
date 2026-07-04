@@ -82,7 +82,7 @@ export type Database = {
           service_id: string
           appointment_date: string
           appointment_time: string
-          status: 'pending' | 'confirmed' | 'declined' | 'completed' | 'cancelled'
+          status: 'pending' | 'confirmed' | 'declined' | 'completed' | 'cancelled' | 'no_show'
           payment_method: 'stripe' | 'cashapp' | 'zelle' | 'applepay'
           payment_status: 'unpaid' | 'deposit_paid' | 'paid'
           deposit_amount: number
