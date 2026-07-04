@@ -2,13 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, CalendarDays, ClipboardList, Images, Settings } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, Images, Scissors, Settings } from 'lucide-react'
 
 const NAV = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/bookings', label: 'Requests', icon: ClipboardList },
+  { href: '/admin', label: 'Home', icon: LayoutDashboard },
   { href: '/admin/calendar', label: 'Calendar', icon: CalendarDays },
   { href: '/admin/gallery', label: 'Gallery', icon: Images },
+  { href: '/admin/services', label: 'Services', icon: Scissors },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 
