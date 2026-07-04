@@ -54,7 +54,7 @@ export function generateIcs({
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//BookedByBri//Booking//EN',
+    'PRODID:-//BrizeeBri//Booking//EN',
     'METHOD:REQUEST',
     'BEGIN:VEVENT',
     `UID:${uid}@brizeebri.com`,
@@ -63,7 +63,7 @@ export function generateIcs({
     `DTEND;TZID=America/Chicago:${endIcs}`,
     `SUMMARY:${summary}`,
     `DESCRIPTION:${description}`,
-    `ORGANIZER;CN=Braids by Brizee Bri:mailto:${organizerEmail}`,
+    `ORGANIZER;CN=Brizee Bri Luxe Hair Studio:mailto:${organizerEmail}`,
     `ATTENDEE;CN=${attendeeName};RSVP=TRUE:mailto:${attendeeEmail}`,
     'END:VEVENT',
     'END:VCALENDAR',

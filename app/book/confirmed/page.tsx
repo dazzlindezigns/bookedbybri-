@@ -19,8 +19,8 @@ export default function ConfirmedPage({
   return (
     <div className="min-h-screen bg-[#f7f5f3] font-sans flex flex-col items-center justify-center px-4 py-16">
       <div className="max-w-sm w-full text-center">
-        <p className="font-cormorant text-lg text-[#8a7f7a] mb-1">Braids by</p>
-        <p className="font-cormorant italic text-4xl text-[#ffabdd] mb-8">Brizee Bri</p>
+        <p className="font-cormorant italic text-4xl text-[#ffabdd] mb-1">Brizee Bri</p>
+        <p className="font-cormorant text-lg text-[#8a7f7a] mb-8">Luxe Hair Studio</p>
 
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 rounded-full bg-[#fff0f8] border-2 border-[#ffabdd] flex items-center justify-center">

@@ -138,7 +138,7 @@ export default function BookPage() {
           )}
           <div className="flex-1">
             <p className="font-cormorant text-lg leading-tight text-[#1a1a1a]">
-              Braids by <em className="italic text-[#ffabdd]">Brizee Bri</em>
+              Brizee Bri Luxe <em className="italic text-[#ffabdd]">Hair Studio</em>
             </p>
             <p className="text-[10px] uppercase tracking-widest text-[#8a7f7a]">{STEP_NAMES[step - 1]}</p>
           </div>

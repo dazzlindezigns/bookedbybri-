@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
       await sendGmail(
         settings.value,
         booking.client_email,
-        'See you tomorrow! — Braids by Brizee Bri',
+        'See you tomorrow! — Brizee Bri Luxe Hair Studio',
         appointmentReminder(
           booking.client_name,
           serviceName,

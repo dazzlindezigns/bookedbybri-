@@ -33,7 +33,8 @@ export default function CancelBookingPage({ params }: { params: { id: string } }
     return (
       <div className="min-h-screen bg-[#1a1a1a] text-white font-sans flex items-center justify-center px-4">
         <div className="max-w-sm w-full text-center">
-          <p className="font-cormorant italic text-4xl text-[#ffabdd] mb-8">Brizee Bri</p>
+          <p className="font-cormorant italic text-4xl text-[#ffabdd]">Brizee Bri</p>
+          <p className="font-cormorant text-base text-[#555] mb-8">Luxe Hair Studio</p>
           <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-6">
             <span className="text-3xl">💔</span>
           </div>
@@ -60,8 +61,8 @@ export default function CancelBookingPage({ params }: { params: { id: string } }
     <div className="min-h-screen bg-[#1a1a1a] text-white font-sans flex items-center justify-center px-4">
       <div className="max-w-sm w-full">
         <div className="text-center mb-8">
-          <p className="font-cormorant text-base text-white/60">Braids by</p>
           <p className="font-cormorant italic text-4xl text-[#ffabdd]">Brizee Bri</p>
+          <p className="font-cormorant text-base text-white/60">Luxe Hair Studio</p>
         </div>
 
         <div className="bg-[#222] border border-[#3a3a3a] rounded-2xl p-6 mb-5">

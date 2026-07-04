@@ -8,16 +8,16 @@ const baseStyle = `
 const headerHtml = `
   <div style="background: #1a1a1a; padding: 32px 24px; text-align: center;">
     <div style="display: inline-block; background: #ffffff; border-radius: 50px; padding: 10px 28px; margin-bottom: 8px;">
-      <span style="font-family: Georgia, serif; font-size: 18px; font-weight: 700; color: #1a1a1a; letter-spacing: 0.5px;">BookedByBri</span>
+      <span style="font-family: Georgia, serif; font-size: 18px; font-weight: 700; color: #1a1a1a; letter-spacing: 0.5px;">Brizee Bri Luxe</span>
     </div>
-    <p style="color: #ffabdd; font-size: 13px; margin: 0; letter-spacing: 1px; text-transform: uppercase;">Braids by Brizee Bri · Pflugerville, TX</p>
+    <p style="color: #ffabdd; font-size: 13px; margin: 0; letter-spacing: 1px; text-transform: uppercase;">Brizee Bri Luxe Hair Studio · Pflugerville, TX</p>
   </div>
 `
 
 const footerHtml = `
   <div style="background: #1a1a1a; padding: 24px; text-align: center; margin-top: 0;">
     <p style="color: #8a8a8a; font-size: 12px; margin: 0 0 8px;">Questions? Reply to this email or DM us on Instagram.</p>
-    <p style="color: #8a8a8a; font-size: 11px; margin: 0;">© Braids by Brizee Bri · Pflugerville, TX</p>
+    <p style="color: #8a8a8a; font-size: 11px; margin: 0;">© Brizee Bri Luxe Hair Studio · Pflugerville, TX</p>
   </div>
 `
 
@@ -28,7 +28,7 @@ function wrapEmail(content: string): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Braids by Brizee Bri</title>
+  <title>Brizee Bri Luxe Hair Studio</title>
 </head>
 <body style="margin: 0; padding: 0; background: #f2f2f0;">
   <div style="${baseStyle}">

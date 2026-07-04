@@ -74,7 +74,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         await sendGmail(
           tokenRow.value,
           booking.client_email,
-          "You're approved! — Braids by Brizee Bri",
+          "You're approved! — Brizee Bri Luxe Hair Studio",
           bookingAccepted(
             booking.client_name,
             serviceName,
@@ -103,7 +103,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         await sendGmail(
           tokenRow.value,
           booking.client_email,
-          'Update on your booking — Braids by Brizee Bri',
+          'Update on your booking — Brizee Bri Luxe Hair Studio',
           bookingDeclined(booking.client_name, serviceName, declineReason)
         )
       }
@@ -119,7 +119,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         await sendGmail(
           tokenRow.value,
           booking.client_email,
-          'Appointment Cancelled — Braids by Brizee Bri',
+          'Appointment Cancelled — Brizee Bri Luxe Hair Studio',
           appointmentCancelled(booking.client_name, serviceName, dateStr, 'admin')
         )
       }
@@ -137,7 +137,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         await sendGmail(
           tokenRow.value,
           booking.client_email,
-          'How did it go? — Braids by Brizee Bri',
+          'How did it go? — Brizee Bri Luxe Hair Studio',
           reviewRequest(booking.client_name, serviceName, reviewRow.value)
         )
       }

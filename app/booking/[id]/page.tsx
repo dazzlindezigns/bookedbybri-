@@ -58,8 +58,8 @@ export default async function BookingStatusPage({ params }: { params: { id: stri
     <div className="min-h-screen bg-[#1a1a1a] text-white font-sans px-4 py-12">
       <div className="max-w-sm mx-auto">
         <div className="text-center mb-8">
-          <p className="font-cormorant text-base text-white/60">Braids by</p>
           <p className="font-cormorant italic text-4xl text-[#ffabdd]">Brizee Bri</p>
+          <p className="font-cormorant text-base text-white/60">Luxe Hair Studio</p>
         </div>
 
         <h1 className="text-xl font-bold mb-6">Your Request</h1>

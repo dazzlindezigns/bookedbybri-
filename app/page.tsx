@@ -51,12 +51,12 @@ function photoUrl(path: string) {
 }
 
 const STYLE_TAGS = [
-  'Knotless Braids',
+  'Braids',
+  'Wigs',
+  'Quick Weaves',
+  'Knotless',
   'Goddess Locs',
   'Boho Braids',
-  'Passion Twists',
-  'Faux Locs',
-  'Tribal Braids',
   '+ more',
 ]
 
@@ -86,7 +86,7 @@ export default async function HomePage() {
             <span className="font-cormorant italic text-[#ffabdd] font-bold text-base leading-none">B</span>
           </div>
           <span className="text-white text-xs font-semibold leading-tight hidden sm:block">
-            Braids by Brizee Bri
+            Brizee Bri Luxe Hair Studio
           </span>
         </div>
         <Link
@@ -116,7 +116,7 @@ export default async function HomePage() {
           >
             <Image
               src="/logo.png"
-              alt="Braids by Brizee Bri Logo"
+              alt="Brizee Bri Luxe Hair Studio"
               width={154}
               height={154}
               className="object-contain"
@@ -125,12 +125,15 @@ export default async function HomePage() {
           </div>
 
           <div>
-            <p className="font-cormorant text-2xl font-light tracking-widest text-white/80 uppercase">
-              Braids by
-            </p>
-            <h1 className="font-cormorant italic text-6xl sm:text-7xl font-semibold text-[#ffabdd] leading-none mt-1">
+            <h1 className="font-cormorant italic text-6xl sm:text-7xl font-semibold text-[#ffabdd] leading-none">
               Brizee Bri
             </h1>
+            <p className="font-cormorant text-2xl font-light tracking-widest text-white/80 uppercase mt-1">
+              Luxe Hair Studio
+            </p>
+            <p className="text-[#ffabdd]/60 text-sm tracking-widest uppercase mt-2">
+              Luxury Hair. Flawless Finish.
+            </p>
           </div>
 
           <div className="flex items-center gap-1.5 text-white/60 text-sm">
@@ -142,7 +145,7 @@ export default async function HomePage() {
             href="/book"
             className="mt-2 bg-[#ffabdd] text-[#1a1a1a] font-semibold px-8 py-3.5 rounded-full hover:bg-[#c4658f] hover:text-white transition-all duration-200 active:scale-95 shadow-lg shadow-[#ffabdd]/20"
           >
-            Book an Appointment
+            Request an Appointment
           </Link>
         </div>
       </section>

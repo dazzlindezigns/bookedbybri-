@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import AdminNav from './AdminNav'
 
 export const metadata: Metadata = {
-  title: 'Admin | Braids by Brizee Bri',
+  title: 'Admin | Brizee Bri Luxe Hair Studio',
   manifest: '/admin-manifest.json',
   appleWebApp: {
     capable: true,
@@ -26,7 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-[#111] border-b border-white/5">
         <div>
           <p className="font-cormorant text-base leading-tight text-white">
-            Braids by <em className="italic text-[#ffabdd]">Brizee Bri</em>
+            <em className="italic text-[#ffabdd]">Brizee Bri</em> Luxe Hair Studio
           </p>
           <p className="text-[10px] uppercase tracking-widest text-white/30">Admin</p>
         </div>

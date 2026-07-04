@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       await sendGmail(
         settings.value,
         booking.client_email,
-        `Your price quote — Braids by Brizee Bri`,
+        `Your price quote — Brizee Bri Luxe Hair Studio`,
         quoteReady(
           booking.client_name,
           service?.name || 'your style',

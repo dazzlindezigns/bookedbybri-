@@ -1,7 +1,7 @@
 {
-  "name": "BookedByBri Admin",
+  "name": "Brizee Bri Admin",
   "short_name": "Bri Admin",
-  "description": "Admin dashboard for Braids by Brizee Bri",
+  "description": "Admin dashboard for Brizee Bri Luxe Hair Studio",
   "start_url": "/admin",
   "scope": "/admin",
   "display": "standalone",

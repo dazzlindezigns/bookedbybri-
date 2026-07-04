@@ -107,7 +107,7 @@ export async function sendGmailWithIcs(
   const auth = await getAuthenticatedClient(refreshToken)
   const gmail = google.gmail({ version: 'v1', auth })
 
-  const boundary = `BookedByBri_${Date.now()}`
+  const boundary = `BrizeeBri_${Date.now()}`
   const icsBase64 = Buffer.from(icsContent).toString('base64')
 
   const message = [

@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
       await sendGmail(
         settings.value,
         client_email,
-        'We got your booking request! — Braids by Brizee Bri',
+        'We got your booking request! — Brizee Bri Luxe Hair Studio',
         bookingReceived(client_name, serviceName, appointment_date, appointment_time)
       )
       await sb.from('bookings').update({ confirmation_sent_at: new Date().toISOString() }).eq('id', booking.id)

@@ -47,7 +47,7 @@ export async function handleDepositReceived(bookingId: string) {
     const ics = generateIcs({
       uid: booking.id,
       summary: `Braids Appointment — ${serviceName}`,
-      description: 'Your appointment with Braids by Brizee Bri in Pflugerville, TX',
+      description: 'Your appointment with Brizee Bri Luxe Hair Studio in Pflugerville, TX',
       date: booking.appointment_date,
       time: booking.appointment_time,
       durationMinutes,
@@ -59,7 +59,7 @@ export async function handleDepositReceived(bookingId: string) {
     await sendGmailWithIcs(
       tokenRow.value,
       booking.client_email,
-      "You're confirmed! — Braids by Brizee Bri",
+      "You're confirmed! — Brizee Bri Luxe Hair Studio",
       bookingConfirmed(booking.client_name, serviceName, dateStr, booking.appointment_time, depositPaid, balanceDue, `${SITE_URL}/booking/${bookingId}/cancel`),
       ics
     )

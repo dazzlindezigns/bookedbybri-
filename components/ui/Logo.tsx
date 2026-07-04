@@ -9,13 +9,13 @@ export default function Logo({ size = 'md', showName = false }: LogoProps) {
     <div className="flex items-center gap-2">
       <div className="flex items-center justify-center bg-white rounded-full flex-shrink-0" style={{ width: wrapper, height: wrapper }}>
         <div className="relative" style={{ width: container, height: container }}>
-          <Image src="/logo.png" alt="Braids by Brizee Bri" fill className="object-contain" />
+          <Image src="/logo.png" alt="Brizee Bri Luxe Hair Studio" fill className="object-contain" />
         </div>
       </div>
       {showName && (
         <div>
-          <p className="text-white/60 text-xs font-light tracking-widest uppercase">Braids by</p>
           <p className="font-cormorant italic text-[#ffabdd] text-xl leading-tight">Brizee Bri</p>
+          <p className="text-white/60 text-xs font-light tracking-widest uppercase">Luxe Hair Studio</p>
         </div>
       )}
     </div>

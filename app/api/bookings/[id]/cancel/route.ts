@@ -44,7 +44,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       await sendGmail(
         tokenRow.value,
         booking.client_email,
-        'Appointment Cancelled — Braids by Brizee Bri',
+        'Appointment Cancelled — Brizee Bri Luxe Hair Studio',
         appointmentCancelled(booking.client_name, serviceName, dateStr, 'client')
       )
     }

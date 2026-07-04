@@ -18,18 +18,18 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Braids by Brizee Bri | Book Your Appointment',
+  title: 'Brizee Bri Luxe Hair Studio | Book Your Appointment',
   description:
-    'Knotless braids, goddess locs, boho styles & more in Pflugerville, TX. Book your appointment with Brizee Bri.',
+    'Luxury braids, wigs & quick weaves in Pflugerville, TX. Luxury hair. Flawless finish.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'BookedByBri',
+    title: 'Brizee Bri Luxe',
   },
   openGraph: {
-    title: 'Braids by Brizee Bri',
-    description: 'Premium braiding in Pflugerville, TX. Book your appointment.',
+    title: 'Brizee Bri Luxe Hair Studio',
+    description: 'Luxury hair. Flawless finish. Braids, wigs & quick weaves in Pflugerville, TX.',
     type: 'website',
   },
 }

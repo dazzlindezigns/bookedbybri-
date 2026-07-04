@@ -32,8 +32,8 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-[#f7f5f3] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <p className="font-cormorant text-xl text-[#8a7f7a]">Braids by</p>
           <p className="font-cormorant italic text-5xl text-[#ffabdd] mb-1">Brizee Bri</p>
+          <p className="font-cormorant text-xl text-[#8a7f7a]">Luxe Hair Studio</p>
           <p className="text-[#b0a8a4] text-xs uppercase tracking-widest">Admin</p>
         </div>
 

@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       await sendGmail(
         settings.value,
         booking.client_email,
-        `Your appointment is confirmed! — Braids by Brizee Bri`,
+        `Your appointment is confirmed! — Brizee Bri Luxe Hair Studio`,
         bookingConfirmed(
           booking.client_name,
           service?.name || 'your style',

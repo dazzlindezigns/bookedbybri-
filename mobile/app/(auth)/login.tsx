@@ -25,7 +25,7 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.inner}>
-          <Text style={styles.logo}>BookedByBri</Text>
+          <Text style={styles.logo}>Brizee Bri</Text>
           <Text style={styles.sub}>ADMIN</Text>
 
           {error ? (
