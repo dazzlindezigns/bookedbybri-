@@ -46,11 +46,12 @@ export default async function CalendarPage({
 
   const bookings = (rawBookings || []) as CalendarBooking[]
 
-  // Group by date
+  // Group by date — slice to YYYY-MM-DD in case DB returns a timestamp
   const byDate: Record<string, CalendarBooking[]> = {}
   for (const b of bookings) {
-    if (!byDate[b.appointment_date]) byDate[b.appointment_date] = []
-    byDate[b.appointment_date].push(b)
+    const key = (b.appointment_date || '').slice(0, 10)
+    if (!byDate[key]) byDate[key] = []
+    byDate[key].push(b)
   }
 
   // Calendar grid
