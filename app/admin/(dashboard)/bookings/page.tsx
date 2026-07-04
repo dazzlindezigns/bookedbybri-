@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { createSupabaseAdminClient } from '@/lib/supabase'
 import type { BookingRow } from '@/lib/supabase'
 
 const FILTERS = ['all', 'pending', 'confirmed', 'completed', 'cancelled', 'declined', 'no_show'] as const
@@ -25,7 +25,7 @@ export default async function BookingsPage({
 }) {
   const filter = (searchParams.status || 'all') as Filter
   const clientEmail = searchParams.client
-  const sb = createSupabaseServerClient()
+  const sb = createSupabaseAdminClient()
 
   let query = sb
     .from('bookings')

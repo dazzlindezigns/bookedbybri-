@@ -40,12 +40,10 @@ export default async function BookingStatusPage({ params }: { params: { id: stri
   if (!booking) notFound()
 
   const service = booking.services as { name: string; duration_minutes: number } | null
-  const formattedDate = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  const dateStr = (booking.appointment_date || '').slice(0, 10)
+  const formattedDate = dateStr
+    ? new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+    : 'Date TBD'
 
   const balanceDue =
     booking.final_price !== null

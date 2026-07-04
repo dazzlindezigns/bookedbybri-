@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { createSupabaseAdminClient } from '@/lib/supabase'
 import { CalendarDays, Clock, Star } from 'lucide-react'
 import type { BookingRow, BookingImageRow } from '@/lib/supabase'
 
@@ -33,7 +33,7 @@ function initials(name: string) {
 }
 
 export default async function AdminDashboard() {
-  const sb = createSupabaseServerClient()
+  const sb = createSupabaseAdminClient()
   const today = new Date().toISOString().slice(0, 10)
   const weekEnd = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10)
 

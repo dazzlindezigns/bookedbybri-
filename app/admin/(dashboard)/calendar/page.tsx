@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { createSupabaseAdminClient } from '@/lib/supabase'
 
 type CalendarBooking = {
   id: string
@@ -31,7 +31,7 @@ export default async function CalendarPage({
 
   if (isNaN(year) || isNaN(month) || month < 1 || month > 12) notFound()
 
-  const sb = createSupabaseServerClient()
+  const sb = createSupabaseAdminClient()
 
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`
   const endDate = `${year}-${String(month).padStart(2, '0')}-${new Date(year, month, 0).getDate()}`
