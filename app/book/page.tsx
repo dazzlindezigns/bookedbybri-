@@ -17,6 +17,9 @@ type Service = {
 
 const STEP_NAMES = ['Choose Style', 'Preferred Date & Time', 'Your Info', 'Inspiration', 'Payment Preference']
 
+const BRAID_STYLES = ['Knotless Braids', 'Traditional Box Braids', 'Boho / Goddess Braids', 'Goddess Ends', 'Island Braids', 'Passion Twists']
+const PART_SHAPES = ['Square', 'Triangle', 'Diamond']
+
 const PRESET_TIMES = [
   '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
   '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
@@ -41,6 +44,11 @@ export default function BookPage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [depositAmount, setDepositAmount] = useState(50)
+  const [pendingService, setPendingService] = useState<Service | null>(null)
+  const [braidStyle, setBraidStyle] = useState('')
+  const [partShape, setPartShape] = useState('')
+  const [modalBraidStyle, setModalBraidStyle] = useState('')
+  const [modalPartShape, setModalPartShape] = useState('')
 
   useEffect(() => {
     fetch('/api/services')
@@ -88,7 +96,8 @@ export default function BookPage() {
       formData.append('client_name', clientName)
       formData.append('client_email', clientEmail)
       formData.append('client_phone', clientPhone)
-      formData.append('client_notes', clientNotes)
+      const styleDetails = [braidStyle && `Braid Style: ${braidStyle}`, partShape && `Part Shape: ${partShape}`].filter(Boolean).join('\n')
+      formData.append('client_notes', [styleDetails, clientNotes].filter(Boolean).join('\n\n'))
       formData.append('payment_method', paymentMethod)
       formData.append('deposit_amount', String(depositAmount))
       inspoFiles.forEach((f) => formData.append('images', f))
@@ -185,36 +194,55 @@ export default function BookPage() {
           <div>
             <h2 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-4">Choose a Style</h2>
             <div className="grid grid-cols-2 gap-2">
-              {services.map((svc) => (
-                <button
-                  key={svc.id}
-                  onClick={() => setSelectedService(svc)}
-                  className={`text-left p-3 rounded-2xl border transition-all duration-200 relative ${
-                    selectedService?.id === svc.id
-                      ? 'border-[#ffabdd] bg-[#fff0f8]'
-                      : 'border-[#ede9e5] bg-white hover:border-[#ffabdd]/50'
-                  }`}
-                >
-                  {selectedService?.id === svc.id && (
-                    <Check size={14} className="text-[#ffabdd] absolute top-2.5 right-2.5" />
-                  )}
-                  <p className="font-semibold text-[#1a1a1a] text-sm leading-tight pr-5">{svc.name}</p>
-                  <div className="flex items-center gap-1 mt-1.5 text-[10px] text-[#b0a8a4]">
-                    <Clock size={9} />
-                    {svc.duration_minutes < 60
-                      ? `${svc.duration_minutes}m`
-                      : `${Math.floor(svc.duration_minutes / 60)}–${Math.floor(svc.duration_minutes / 60) + 1}h`}
-                    {svc.hair_included && <span className="ml-1">· Hair incl.</span>}
-                  </div>
-                  <div className="mt-1.5">
-                    {svc.requires_consultation ? (
-                      <span className="text-[10px] text-[#8a7f7a]">Consultation</span>
-                    ) : svc.base_price ? (
-                      <span className="text-sm font-semibold text-[#c4658f]">${svc.base_price}</span>
-                    ) : null}
-                  </div>
-                </button>
-              ))}
+              {services.map((svc) => {
+                const isParts = svc.name.toLowerCase().includes('parts')
+                const isSelected = selectedService?.id === svc.id
+                return (
+                  <button
+                    key={svc.id}
+                    onClick={() => {
+                      if (isParts) {
+                        setModalBraidStyle(isSelected ? braidStyle : '')
+                        setModalPartShape(isSelected ? partShape : '')
+                        setPendingService(svc)
+                      } else {
+                        setSelectedService(svc)
+                        setBraidStyle('')
+                        setPartShape('')
+                      }
+                    }}
+                    className={`text-left p-3 rounded-2xl border transition-all duration-200 relative ${
+                      isSelected
+                        ? 'border-[#ffabdd] bg-[#fff0f8]'
+                        : 'border-[#ede9e5] bg-white hover:border-[#ffabdd]/50'
+                    }`}
+                  >
+                    {isSelected && (
+                      <Check size={14} className="text-[#ffabdd] absolute top-2.5 right-2.5" />
+                    )}
+                    <p className="font-semibold text-[#1a1a1a] text-sm leading-tight pr-5">{svc.name}</p>
+                    <div className="flex items-center gap-1 mt-1.5 text-[10px] text-[#b0a8a4]">
+                      <Clock size={9} />
+                      {svc.duration_minutes < 60
+                        ? `${svc.duration_minutes}m`
+                        : `${Math.floor(svc.duration_minutes / 60)}–${Math.floor(svc.duration_minutes / 60) + 1}h`}
+                      {svc.hair_included && <span className="ml-1">· Hair incl.</span>}
+                    </div>
+                    <div className="mt-1.5">
+                      {svc.requires_consultation ? (
+                        <span className="text-[10px] text-[#8a7f7a]">Consultation</span>
+                      ) : svc.base_price ? (
+                        <span className="text-sm font-semibold text-[#c4658f]">${svc.base_price}</span>
+                      ) : null}
+                    </div>
+                    {isSelected && braidStyle && (
+                      <p className="text-[10px] text-[#c4658f] mt-1.5 font-medium">
+                        {braidStyle}{partShape ? ` · ${partShape}` : ''}
+                      </p>
+                    )}
+                  </button>
+                )
+              })}
             </div>
           </div>
         )}
@@ -482,6 +510,67 @@ export default function BookPage() {
           )}
         </div>
       </div>
+
+      {/* Braid style + part shape modal */}
+      {pendingService && (
+        <div className="fixed inset-0 z-50 flex items-end bg-black/50" onClick={() => setPendingService(null)}>
+          <div
+            className="w-full bg-white rounded-t-3xl px-5 pt-4 pb-8 max-w-lg mx-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 bg-[#ede9e5] rounded-full mx-auto mb-5" />
+            <p className="font-cormorant text-xl font-semibold text-[#1a1a1a] mb-0.5">{pendingService.name}</p>
+            <p className="text-[11px] text-[#b0a8a4] uppercase tracking-widest mb-5">Customize your style</p>
+
+            <p className="text-sm font-semibold text-[#1a1a1a] mb-2.5">Braid Style</p>
+            <div className="flex flex-wrap gap-2 mb-5">
+              {BRAID_STYLES.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setModalBraidStyle(s)}
+                  className={`px-3 py-2 rounded-full text-sm border transition-all ${
+                    modalBraidStyle === s
+                      ? 'border-[#ffabdd] bg-[#fff0f8] text-[#c4658f] font-medium'
+                      : 'border-[#ede9e5] text-[#1a1a1a]'
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
+            <p className="text-sm font-semibold text-[#1a1a1a] mb-2.5">Part Shape</p>
+            <div className="flex gap-2 mb-6">
+              {PART_SHAPES.map((shape) => (
+                <button
+                  key={shape}
+                  onClick={() => setModalPartShape(shape)}
+                  className={`flex-1 py-3 rounded-xl border text-sm transition-all ${
+                    modalPartShape === shape
+                      ? 'border-[#ffabdd] bg-[#fff0f8] text-[#c4658f] font-medium'
+                      : 'border-[#ede9e5] text-[#1a1a1a]'
+                  }`}
+                >
+                  {shape}
+                </button>
+              ))}
+            </div>
+
+            <button
+              disabled={!modalBraidStyle || !modalPartShape}
+              onClick={() => {
+                setSelectedService(pendingService)
+                setBraidStyle(modalBraidStyle)
+                setPartShape(modalPartShape)
+                setPendingService(null)
+              }}
+              className="w-full py-4 rounded-full bg-[#1a1a1a] text-white font-semibold disabled:opacity-40 transition-all active:scale-95"
+            >
+              Select →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
