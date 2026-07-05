@@ -190,7 +190,7 @@ export default function BookingDetailClient({
     await patch({ status: 'cancelled' })
   }
 
-  const formattedDate = new Date(booking.appointment_date + 'T12:00:00').toLocaleDateString('en-US', {
+  const formattedDate = new Date((booking.appointment_date || '').slice(0, 10) + 'T12:00:00').toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric',
   })
 

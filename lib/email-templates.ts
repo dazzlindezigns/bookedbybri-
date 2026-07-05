@@ -52,7 +52,13 @@ function infoRow(label: string, value: string): string {
   `
 }
 
-export function bookingReceived(clientName: string, serviceName: string, date: string, time: string): string {
+export function bookingReceived(clientName: string, serviceName: string, date: string, time: string, bookingId?: string): string {
+  const trackingSection = bookingId
+    ? `<div style="text-align: center; margin: 28px 0 8px;">
+        <a href="https://brizeebri.com/booking/${bookingId}" style="display: inline-block; background: #ffabdd; color: #1a1a1a; font-size: 14px; font-weight: 700; padding: 12px 28px; border-radius: 50px; text-decoration: none;">Track your request →</a>
+      </div>
+      <p style="color: #b0a8a4; font-size: 12px; text-align: center; margin: 0;">Check your request status anytime at that link.</p>`
+    : ''
   return wrapEmail(`
     <h1 style="font-family: Georgia, serif; font-size: 28px; color: #1a1a1a; margin: 0 0 8px;">Request received! ✨</h1>
     <p style="color: #8a8a8a; font-size: 15px; margin: 0 0 28px;">Hey ${clientName}, we got your request and Bri will review it within 24 hours.</p>
@@ -64,7 +70,8 @@ export function bookingReceived(clientName: string, serviceName: string, date: s
         ${infoRow('Status', 'Pending Review')}
       </table>
     </div>
-    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0;">Bri will reach out once she&apos;s reviewed your request — either to approve, ask questions, or suggest an alternative time. Stay tuned! 💕</p>
+    <p style="color: #3a3a3a; font-size: 14px; line-height: 1.6; margin: 0 0 24px;">Bri will reach out once she&apos;s reviewed your request — either to approve, ask questions, or suggest an alternative time. Stay tuned! 💕</p>
+    ${trackingSection}
   `)
 }
 

@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
         settings.value,
         client_email,
         'We got your booking request! — Brizee Bri Luxe Hair Studio',
-        bookingReceived(client_name, serviceName, appointment_date, appointment_time)
+        bookingReceived(client_name, serviceName, appointment_date, appointment_time, booking.id)
       )
       await sb.from('bookings').update({ confirmation_sent_at: new Date().toISOString() }).eq('id', booking.id)
     }
