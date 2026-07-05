@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { AlertTriangle, Pencil } from 'lucide-react'
+import { AlertTriangle, Pencil, Send } from 'lucide-react'
+
+type Message = { id: string; direction: 'inbound' | 'outbound'; body: string; created_at: string }
 
 type BookingImage = { id: string; storage_path: string; file_name: string }
 type Service = { id: string; name: string; base_price: number | null; duration_minutes: number }
@@ -42,6 +44,37 @@ export default function BookingDetailClient({
   clientBookingCount?: number
 }) {
   const router = useRouter()
+  const [messages, setMessages] = useState<Message[]>([])
+  const [newMessage, setNewMessage] = useState('')
+  const [sendingMsg, setSendingMsg] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    fetch(`/api/bookings/${booking.id}/messages`)
+      .then((r) => r.ok ? r.json() : [])
+      .then((data) => { if (Array.isArray(data)) setMessages(data) })
+  }, [booking.id])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim()) return
+    setSendingMsg(true)
+    const res = await fetch(`/api/bookings/${booking.id}/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ body: newMessage.trim() }),
+    })
+    if (res.ok) {
+      const data = await res.json()
+      setMessages((prev) => [...prev, data])
+      setNewMessage('')
+    }
+    setSendingMsg(false)
+  }
+
   const [finalPrice, setFinalPrice] = useState<string>(booking.final_price?.toString() || '')
   const [message, setMessage] = useState(
     booking.quote_message || DEFAULT_MESSAGE(booking.client_name, booking.services?.name || 'style')
@@ -430,6 +463,50 @@ export default function BookingDetailClient({
           )}
         </div>
       )}
+
+      {/* Messages thread */}
+      <div className="bg-white border border-[#ede9e5] rounded-2xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-[#ede9e5]">
+          <p className="text-xs text-[#8a7f7a] uppercase tracking-wider">Messages</p>
+        </div>
+        <div className="p-4 space-y-3 max-h-72 overflow-y-auto">
+          {messages.length === 0 ? (
+            <p className="text-[#b0a8a4] text-xs text-center py-4">No messages yet</p>
+          ) : (
+            messages.map((msg) => (
+              <div key={msg.id} className={`flex ${msg.direction === 'outbound' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm ${
+                  msg.direction === 'outbound'
+                    ? 'bg-[#1a1a1a] text-white rounded-br-sm'
+                    : 'bg-[#f7f5f3] text-[#1a1a1a] rounded-bl-sm'
+                }`}>
+                  <p className="leading-snug">{msg.body}</p>
+                  <p className={`text-[10px] mt-1 ${msg.direction === 'outbound' ? 'text-white/40' : 'text-[#b0a8a4]'}`}>
+                    {new Date(msg.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+        <div className="px-3 py-3 border-t border-[#ede9e5] flex gap-2">
+          <input
+            className="flex-1 bg-[#f7f5f3] border border-[#ede9e5] rounded-full px-4 py-2 text-sm text-[#1a1a1a] placeholder-[#b0a8a4] focus:outline-none focus:border-[#ffabdd] transition-colors"
+            placeholder="Type a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage() } }}
+          />
+          <button
+            onClick={handleSendMessage}
+            disabled={sendingMsg || !newMessage.trim()}
+            className="w-9 h-9 rounded-full bg-[#ffabdd] flex items-center justify-center hover:bg-[#c4658f] transition-colors disabled:opacity-40 flex-shrink-0"
+          >
+            <Send size={14} className="text-[#1a1a1a]" />
+          </button>
+        </div>
+      </div>
 
       {showDecline && (
         <div className="fixed inset-0 bg-black/50 flex items-end z-50 p-4" onClick={() => setShowDecline(false)}>
