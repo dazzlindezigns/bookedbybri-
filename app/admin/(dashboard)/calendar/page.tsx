@@ -173,7 +173,9 @@ export default async function CalendarPage({
             {bookings
               .filter((b) => b.status === 'confirmed' && b.appointment_date >= todayStr)
               .sort((a, b) => a.appointment_date.localeCompare(b.appointment_date) || a.appointment_time.localeCompare(b.appointment_time))
-              .map((b) => (
+              .map((b) => {
+                const d = new Date((b.appointment_date || '').slice(0, 10) + 'T12:00:00')
+                return (
                 <Link
                   key={b.id}
                   href={`/admin/bookings/${b.id}`}
@@ -181,10 +183,10 @@ export default async function CalendarPage({
                 >
                   <div className="text-center flex-shrink-0 w-10">
                     <p className="text-xs text-[#8a7f7a]">
-                      {new Date(b.appointment_date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short' })}
+                      {d.toLocaleDateString('en-US', { month: 'short' })}
                     </p>
                     <p className="text-lg font-bold text-[#1a1a1a] leading-tight">
-                      {new Date(b.appointment_date + 'T12:00:00').getDate()}
+                      {d.getDate()}
                     </p>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -195,7 +197,8 @@ export default async function CalendarPage({
                     Confirmed
                   </span>
                 </Link>
-              ))}
+                )
+              })}
           </div>
         </div>
       )}
