@@ -84,6 +84,7 @@ export async function sendGmail(
 
   const message = [
     `To: ${to}`,
+    'From: Brizee Bri Luxe Hair Studio',
     'Content-Type: text/html; charset=utf-8',
     'MIME-Version: 1.0',
     `Subject: ${subject}`,
@@ -112,6 +113,7 @@ export async function sendGmailWithIcs(
 
   const message = [
     `To: ${to}`,
+    'From: Brizee Bri Luxe Hair Studio',
     'MIME-Version: 1.0',
     `Subject: ${subject}`,
     `Content-Type: multipart/mixed; boundary="${boundary}"`,
