@@ -2,12 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, CalendarDays, Images, Scissors, Settings } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, MessageSquare, Scissors, Settings } from 'lucide-react'
 
 const NAV = [
   { href: '/admin', label: 'Home', icon: LayoutDashboard },
   { href: '/admin/calendar', label: 'Calendar', icon: CalendarDays },
-  { href: '/admin/gallery', label: 'Gallery', icon: Images },
+  { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/services', label: 'Services', icon: Scissors },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]

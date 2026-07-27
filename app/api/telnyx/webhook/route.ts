@@ -15,10 +15,10 @@ export async function POST(req: NextRequest) {
 
   const sb = createSupabaseAdminClient()
 
-  // Normalize phone: strip non-digits, take last 10
   const digits = from.replace(/\D/g, '')
   const last10 = digits.slice(-10)
 
+  // Try to match to a booking first
   const { data: booking } = await sb
     .from('bookings')
     .select('id')
@@ -27,15 +27,40 @@ export async function POST(req: NextRequest) {
     .limit(1)
     .maybeSingle()
 
-  if (!booking) return NextResponse.json({ ok: true })
+  if (booking) {
+    await sb.from('booking_messages').insert({
+      booking_id: booking.id,
+      direction: 'inbound',
+      body: text,
+    })
+    return NextResponse.json({ ok: true })
+  }
 
-  await sb.from('booking_messages').insert({
-    booking_id: booking.id,
-    direction: 'inbound',
-    body: text,
-  })
+  // No booking — find or create a contact
+  const { data: existingContact } = await sb
+    .from('contacts')
+    .select('id')
+    .ilike('phone', `%${last10}%`)
+    .maybeSingle()
 
-  // TODO: push notification to admin on new inbound message
+  let contactId = existingContact?.id
+
+  if (!contactId) {
+    const { data: newContact } = await sb
+      .from('contacts')
+      .insert({ phone: from })
+      .select('id')
+      .single()
+    contactId = newContact?.id
+  }
+
+  if (contactId) {
+    await sb.from('contact_messages').insert({
+      contact_id: contactId,
+      direction: 'inbound',
+      body: text,
+    })
+  }
 
   return NextResponse.json({ ok: true })
 }
