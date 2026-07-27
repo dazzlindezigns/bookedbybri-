@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase'
+import { sendSms } from '@/lib/telnyx'
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const sb = createSupabaseAdminClient()
@@ -27,9 +28,19 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // TODO: send via Telnyx SMS once TELNYX_API_KEY and TELNYX_PHONE_NUMBER are set
-  // const booking = await sb.from('bookings').select('client_phone').eq('id', params.id).single()
-  // await sendSms(booking.data.client_phone, body.trim())
+  // Send SMS to client's phone if Telnyx is configured
+  try {
+    const { data: booking } = await sb
+      .from('bookings')
+      .select('client_phone')
+      .eq('id', params.id)
+      .single()
+    if (booking?.client_phone) {
+      await sendSms(booking.client_phone, body.trim())
+    }
+  } catch {
+    // SMS failure doesn't block the message from saving
+  }
 
   return NextResponse.json(data)
 }
