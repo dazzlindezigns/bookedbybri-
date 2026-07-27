@@ -8,7 +8,7 @@ import { LayoutDashboard, CalendarDays, MessageSquare, Images, Scissors, Setting
 const PRIMARY = [
   { href: '/admin', label: 'Home', icon: LayoutDashboard },
   { href: '/admin/calendar', label: 'Calendar', icon: CalendarDays },
-  { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
+  { href: '/admin/messages', label: 'Clients', icon: MessageSquare },
   { href: '/admin/gallery', label: 'Gallery', icon: Images },
 ]
 

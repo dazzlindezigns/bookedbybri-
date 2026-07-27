@@ -112,7 +112,7 @@ export default function MessagesPage() {
     <div className="px-4 py-6 pb-28">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-cormorant text-3xl font-semibold text-[#1a1a1a]">Messages</h1>
+        <h1 className="font-cormorant text-3xl font-semibold text-[#1a1a1a]">Clients</h1>
         <div className="flex items-center gap-2">
           <Link
             href="/admin/messages/broadcast"
