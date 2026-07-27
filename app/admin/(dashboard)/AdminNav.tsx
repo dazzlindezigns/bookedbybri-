@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, CalendarDays, MessageSquare, Images, Sparkles } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, MessageSquare, Images, Scissors, Settings, Sparkles } from 'lucide-react'
 
 const PRIMARY = [
   { href: '/admin', label: 'Home', icon: LayoutDashboard },
