@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, CalendarDays, MessageSquare, Images, Scissors, Settings, MoreHorizontal } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, MessageSquare, Images, Sparkles } from 'lucide-react'
 
 const PRIMARY = [
   { href: '/admin', label: 'Home', icon: LayoutDashboard },
@@ -75,8 +75,7 @@ export default function AdminNav() {
             overflowActive || open ? 'text-[#ffabdd]' : 'text-white/40 hover:text-white/70'
           }`}
         >
-          <MoreHorizontal size={20} />
-          <span className="text-[10px]">···</span>
+          <Sparkles size={20} />
         </button>
       </nav>
     </>
