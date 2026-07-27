@@ -10,4 +10,6 @@ export const Colors = {
   green: '#22c55e',
   red: '#ef4444',
   errorBg: '#fef2f2',
+  dark: '#1a1a1a',
+  dark2: '#2a2a2a',
 }

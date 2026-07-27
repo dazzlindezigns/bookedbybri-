@@ -28,6 +28,17 @@ export type Message = {
   created_at: string
 }
 
+export type PersonRecord = {
+  id: string
+  type: 'booking' | 'contact'
+  name: string
+  phone: string | null
+  email: string | null
+  lastMessage: string | null
+  lastMessageAt: string | null
+  lastDirection: 'inbound' | 'outbound' | null
+}
+
 export type Service = {
   id: string
   name: string

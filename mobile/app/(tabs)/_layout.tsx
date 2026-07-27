@@ -1,9 +1,13 @@
 import { Tabs } from 'expo-router'
-import { Text } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/colors'
 
-function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
-  return <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.4 }}>{emoji}</Text>
+type IconName = React.ComponentProps<typeof Ionicons>['name']
+
+function TabIcon({ name, nameOutline, color, focused }: {
+  name: IconName; nameOutline: IconName; color: string; focused: boolean
+}) {
+  return <Ionicons name={focused ? name : nameOutline} size={22} color={color} />
 }
 
 export default function TabsLayout() {
@@ -11,44 +15,70 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.darkPink,
-        tabBarInactiveTintColor: Colors.muted,
+        tabBarActiveTintColor: Colors.pink,
+        tabBarInactiveTintColor: 'rgba(255,255,255,0.4)',
         tabBarStyle: {
-          backgroundColor: Colors.white,
-          borderTopColor: Colors.border,
+          backgroundColor: Colors.dark,
+          borderTopColor: 'rgba(255,255,255,0.1)',
           borderTopWidth: 1,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
+        tabBarLabelStyle: { fontSize: 10, fontWeight: '500' },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" focused={focused} />,
+          title: 'Home',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="home" nameOutline="home-outline" color={color} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="requests"
+        name="calendar"
         options={{
-          title: 'Requests',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📋" focused={focused} />,
+          title: 'Calendar',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="calendar" nameOutline="calendar-outline" color={color} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="services"
+        name="clients"
         options={{
-          title: 'Services',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="✂️" focused={focused} />,
+          title: 'Clients',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="people" nameOutline="people-outline" color={color} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="phone"
         options={{
-          title: 'Settings',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="⚙️" focused={focused} />,
+          title: 'Phone',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="call" nameOutline="call-outline" color={color} focused={focused} />
+          ),
         }}
       />
+      <Tabs.Screen
+        name="more"
+        options={{
+          title: 'More',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="ellipsis-horizontal-circle"
+              nameOutline="ellipsis-horizontal-circle-outline"
+              color={color}
+              focused={focused}
+            />
+          ),
+        }}
+      />
+      {/* Navigable but hidden from tab bar */}
+      <Tabs.Screen name="requests" options={{ href: null }} />
+      <Tabs.Screen name="services" options={{ href: null }} />
+      <Tabs.Screen name="settings" options={{ href: null }} />
     </Tabs>
   )
 }

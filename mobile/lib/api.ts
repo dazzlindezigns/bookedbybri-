@@ -75,4 +75,23 @@ export const api = {
     })
     return res.json()
   },
+
+  async fetchPeople() {
+    const res = await fetch(`${BASE}/api/people`)
+    return res.json()
+  },
+
+  async fetchContactMessages(contactId: string) {
+    const res = await fetch(`${BASE}/api/contacts/${contactId}/messages`)
+    return res.json()
+  },
+
+  async sendContactMessage(contactId: string, body: string) {
+    const res = await fetch(`${BASE}/api/contacts/${contactId}/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ body }),
+    })
+    return res.json()
+  },
 }
