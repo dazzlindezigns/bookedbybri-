@@ -52,8 +52,8 @@ export default async function MessagesPage() {
     }
   }
 
-  const bookingIds = [...bookingLatest.keys()]
-  const contactIds = [...contactLatest.keys()]
+  const bookingIds = Array.from(bookingLatest.keys())
+  const contactIds = Array.from(contactLatest.keys())
 
   const [{ data: bookings }, { data: contacts }] = await Promise.all([
     bookingIds.length
