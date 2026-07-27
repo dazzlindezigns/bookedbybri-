@@ -228,6 +228,67 @@ export type Database = {
           }
         ]
       }
+      contacts: {
+        Row: {
+          id: string
+          name: string | null
+          phone: string | null
+          email: string | null
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name?: string | null
+          phone?: string | null
+          email?: string | null
+          notes?: string | null
+        }
+        Update: Partial<Database['braids']['Tables']['contacts']['Insert']>
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          id: string
+          contact_id: string
+          direction: 'inbound' | 'outbound'
+          body: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          contact_id: string
+          direction: 'inbound' | 'outbound'
+          body: string
+        }
+        Update: Partial<Database['braids']['Tables']['contact_messages']['Insert']>
+        Relationships: [
+          {
+            foreignKeyName: "contact_messages_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      broadcasts: {
+        Row: {
+          id: string
+          message: string
+          channel: string
+          sent_count: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          message: string
+          channel: string
+          sent_count?: number
+        }
+        Update: Partial<Database['braids']['Tables']['broadcasts']['Insert']>
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: { [_ in never]: never }
@@ -245,6 +306,9 @@ export type AdminSettingRow = Database['braids']['Tables']['admin_settings']['Ro
 export type PolicyRow = Database['braids']['Tables']['policies']['Row']
 export type PushSubscriptionRow = Database['braids']['Tables']['push_subscriptions']['Row']
 export type AvailabilityBlockRow = Database['braids']['Tables']['availability_blocks']['Row']
+export type ContactRow = Database['braids']['Tables']['contacts']['Row']
+export type ContactMessageRow = Database['braids']['Tables']['contact_messages']['Row']
+export type BroadcastRow = Database['braids']['Tables']['broadcasts']['Row']
 
 export type BookingWithRelations = BookingRow & {
   services: Pick<ServiceRow, 'id' | 'name' | 'base_price' | 'duration_minutes'> | null
