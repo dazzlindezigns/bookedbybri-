@@ -10,8 +10,8 @@ export async function POST(req: NextRequest) {
   if (!message?.trim()) return NextResponse.json({ error: 'message required' }, { status: 400 })
 
   const sb = createSupabaseAdminClient()
-  const phones = new Set<string>()
-  const emails = new Set<string>()
+  const phoneSet = new Set<string>()
+  const emailSet = new Set<string>()
 
   const [{ data: bookings }, { data: contacts }] = await Promise.all([
     sb.from('bookings').select('client_phone, client_email').not('status', 'in', '("cancelled","declined")'),
@@ -19,13 +19,16 @@ export async function POST(req: NextRequest) {
   ])
 
   for (const b of bookings || []) {
-    if (b.client_phone) phones.add(b.client_phone)
-    if (b.client_email) emails.add(b.client_email)
+    if (b.client_phone) phoneSet.add(b.client_phone)
+    if (b.client_email) emailSet.add(b.client_email)
   }
   for (const c of contacts || []) {
-    if (c.phone) phones.add(c.phone)
-    if (c.email) emails.add(c.email)
+    if (c.phone) phoneSet.add(c.phone)
+    if (c.email) emailSet.add(c.email)
   }
+
+  const phones = Array.from(phoneSet)
+  const emails = Array.from(emailSet)
 
   let smsSent = 0
   let emailSent = 0
