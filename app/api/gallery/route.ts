@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   if (!file) return NextResponse.json({ error: 'No file' }, { status: 400 })
 
   const ext = file.name.split('.').pop()
-  const path = `gallery/${Date.now()}.${ext}`
+  const path = `${Date.now()}.${ext}`
   const buffer = Buffer.from(await file.arrayBuffer())
 
   const { error: uploadError } = await sb.storage

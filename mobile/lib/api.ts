@@ -94,4 +94,18 @@ export const api = {
     })
     return res.json()
   },
+
+  async fetchContact(id: string) {
+    const res = await fetch(`${BASE}/api/contacts/${id}`)
+    return res.json()
+  },
+
+  async updateContact(id: string, body: object) {
+    const res = await fetch(`${BASE}/api/contacts/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    return res.json()
+  },
 }
