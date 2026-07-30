@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, CalendarDays, MessageSquare, Images, Scissors, Settings, Sparkles } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, MessageSquare, Phone, Scissors, Settings, Sparkles } from 'lucide-react'
 
 const PRIMARY = [
   { href: '/admin', label: 'Home', icon: LayoutDashboard },
   { href: '/admin/calendar', label: 'Calendar', icon: CalendarDays },
   { href: '/admin/messages', label: 'Clients', icon: MessageSquare },
-  { href: '/admin/gallery', label: 'Gallery', icon: Images },
+  { href: '/admin/phone', label: 'Phone', icon: Phone },
 ]
 
 const OVERFLOW = [

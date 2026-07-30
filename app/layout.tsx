@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   description:
     'Luxury braids, wigs & quick weaves in Pflugerville, TX. Luxury hair. Flawless finish.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+    shortcut: '/logo.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',

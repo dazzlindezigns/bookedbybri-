@@ -167,11 +167,16 @@ export default function SettingsPage() {
     <div className="px-4 py-6">
       <h1 className="font-cormorant text-3xl font-semibold text-[#1a1a1a] mb-6">Settings</h1>
 
+      <Section title="Landing Page" />
+      <Field label="Hero tagline (italic line above headline)" k="hero_tagline" placeholder="Luxury Hair. Flawless Finish." />
+      <Field label="Hero headline" k="hero_headline" placeholder="Look Luxe.\nFeel Confident." type="textarea" />
+      <Field label="Hero subtext" k="hero_subtext" placeholder="Book your next hair appointment with ease..." type="textarea" />
+
       <Section title="Business Info" />
       <Field label="Business name" k="business_name" />
       <Field label="Location" k="location" placeholder="City, State" />
       <Field label="Phone" k="phone" placeholder="+1 (555) 000-0000" />
-      <Field label="Bio" k="bio" type="textarea" />
+      <Field label="Bio (About section)" k="bio" type="textarea" />
 
       <Section title="Social Handles" />
       <Field label="Instagram" k="instagram" placeholder="@handle" />
