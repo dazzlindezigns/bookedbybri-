@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { createSupabaseAdminClient } from '@/lib/supabase'
-import { MapPin, Instagram, Facebook, Clipboard } from 'lucide-react'
+import { MapPin, Instagram, Facebook, Clipboard, Sparkles, Clock, Heart } from 'lucide-react'
 
 async function getSettings() {
   try {
@@ -168,6 +168,81 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="bg-[#1a1a1a] px-6 py-16 max-w-2xl mx-auto">
+        <h2 className="font-cormorant text-4xl font-semibold text-white mb-2 text-center">How It Works</h2>
+        <p className="text-white/40 text-sm text-center mb-10">Getting booked with Bri is simple</p>
+        <div className="space-y-6">
+          {[
+            {
+              step: '01',
+              title: 'Request Your Style',
+              body: 'Choose your service, pick a preferred date, and submit your request — takes less than 5 minutes.',
+            },
+            {
+              step: '02',
+              title: 'Bri Reviews & Confirms',
+              body: 'Bri personally reviews every request and reaches out within 24 hours to confirm your appointment and collect your deposit.',
+            },
+            {
+              step: '03',
+              title: 'Get Gorgeous',
+              body: "Show up, relax, and leave with flawless braids. It's that simple.",
+            },
+          ].map(({ step, title, body }) => (
+            <div key={step} className="flex gap-5 items-start">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full border border-[#ffabdd]/30 flex items-center justify-center">
+                <span className="text-[#ffabdd] font-cormorant font-semibold text-lg">{step}</span>
+              </div>
+              <div>
+                <p className="text-white font-semibold text-base mb-1">{title}</p>
+                <p className="text-white/50 text-sm leading-relaxed">{body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-10 text-center">
+          <Link
+            href="/book"
+            className="inline-block bg-[#ffabdd] text-[#1a1a1a] font-semibold px-8 py-3.5 rounded-full hover:bg-[#c4658f] hover:text-white transition-all duration-200 active:scale-95"
+          >
+            Request an Appointment →
+          </Link>
+        </div>
+      </section>
+
+      {/* Why Brizee Bri */}
+      <section className="bg-[#141414] px-6 py-16 max-w-2xl mx-auto">
+        <h2 className="font-cormorant text-4xl font-semibold text-white mb-10 text-center">Why Brizee Bri?</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            {
+              icon: <Sparkles size={20} className="text-[#ffabdd]" />,
+              title: 'Custom Creations',
+              body: 'Every style is tailored to your vision. No cookie-cutter looks — Bri makes it personal.',
+            },
+            {
+              icon: <Clock size={20} className="text-[#ffabdd]" />,
+              title: 'Your Time Respected',
+              body: 'Appointment-only means no waiting. Your time is as valuable as your style.',
+            },
+            {
+              icon: <Heart size={20} className="text-[#ffabdd]" />,
+              title: 'Hair Health First',
+              body: 'Protective styles that protect. Bri prioritizes the health of your hair, not just the look.',
+            },
+          ].map(({ icon, title, body }) => (
+            <div key={title} className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-5 flex flex-col gap-3 hover:border-[#ffabdd]/30 transition-colors">
+              <div className="w-10 h-10 rounded-full bg-[#ffabdd]/10 flex items-center justify-center">
+                {icon}
+              </div>
+              <p className="text-white font-semibold text-sm">{title}</p>
+              <p className="text-white/50 text-xs leading-relaxed">{body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Gallery — dark */}
       <section className="bg-[#1a1a1a] px-4 py-16 max-w-2xl mx-auto">
         <h2 className="font-cormorant text-4xl font-semibold text-white mb-8 text-center">
@@ -263,6 +338,36 @@ export default async function HomePage() {
           </details>
         </section>
       )}
+
+      {/* Footer */}
+      <footer className="bg-[#0f0f0f] border-t border-white/5 px-6 py-10">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                <span className="font-cormorant italic text-[#ffabdd] font-bold text-base leading-none">B</span>
+              </div>
+              <div>
+                <p className="text-white text-sm font-semibold leading-tight">Brizee Bri Luxe Hair Studio</p>
+                <p className="text-white/30 text-xs">{location}</p>
+              </div>
+            </div>
+            <Link
+              href="/book"
+              className="bg-[#ffabdd] text-[#1a1a1a] font-semibold text-sm px-6 py-2.5 rounded-full hover:bg-[#c4658f] hover:text-white transition-all"
+            >
+              Request an Appointment
+            </Link>
+          </div>
+          <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-white/20 text-xs">© {new Date().getFullYear()} Brizee Bri Luxe Hair Studio. All rights reserved.</p>
+            <div className="flex items-center gap-4 text-xs text-white/30">
+              <Link href="/privacy" className="hover:text-white/60 transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-white/60 transition-colors">Terms & Conditions</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       {/* Sticky bottom CTA */}
       <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-[#141414] via-[#141414]/90 to-transparent pointer-events-none">

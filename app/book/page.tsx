@@ -41,6 +41,7 @@ export default function BookPage() {
   const [inspoFiles, setInspoFiles] = useState<File[]>([])
   const [paymentMethod, setPaymentMethod] = useState<string>('')
   const [settings, setSettings] = useState<Record<string, string>>({})
+  const [smsConsent, setSmsConsent] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [depositAmount, setDepositAmount] = useState(50)
@@ -119,7 +120,7 @@ export default function BookPage() {
   const canProceed = () => {
     if (step === 1) return !!selectedService
     if (step === 2) return !!selectedDate && !!selectedTime
-    if (step === 3) return clientName && clientEmail && clientPhone
+    if (step === 3) return clientName && clientEmail && clientPhone && smsConsent
     if (step === 4) return !selectedService?.requires_consultation || inspoFiles.length > 0
     if (step === 5) return !!paymentMethod
     return false
@@ -343,6 +344,22 @@ export default function BookPage() {
                 <label className="block text-xs text-[#8a7f7a] mb-1.5 uppercase tracking-wider">Phone *</label>
                 <input className="input-field" type="tel" placeholder="(555) 000-0000" value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} />
               </div>
+              <div className="flex items-start gap-3 p-4 bg-[#fff8e1] border border-[#ffe082] rounded-2xl">
+                <input
+                  type="checkbox"
+                  id="smsConsent"
+                  checked={smsConsent}
+                  onChange={(e) => setSmsConsent(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-[#c4658f] flex-shrink-0 cursor-pointer"
+                />
+                <label htmlFor="smsConsent" className="text-xs text-[#92400e] leading-relaxed cursor-pointer">
+                  By providing my phone number, I agree to receive appointment-related text messages from Brizee Bri Luxe Hair Studio. Reply STOP to opt out. Msg & data rates may apply.{' '}
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline font-medium">Privacy Policy</a>
+                  {' & '}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline font-medium">Terms</a>.
+                </label>
+              </div>
+
               <div>
                 <label className="block text-xs text-[#8a7f7a] mb-1.5 uppercase tracking-wider">Notes for Bri (optional)</label>
                 <textarea
