@@ -66,7 +66,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
-            <div className="w-9 h-9 bg-white rounded-full overflow-hidden flex items-center justify-center shadow-md">
+            <div className="w-9 h-9 overflow-hidden flex items-center justify-center">
               <Image src="/logo.png" alt="BB" width={36} height={36} className="object-contain" />
             </div>
             <div className="hidden sm:block">
@@ -113,6 +113,13 @@ export default async function HomePage() {
 
             {/* Left — copy */}
             <div className="flex flex-col gap-7 text-center lg:text-left items-center lg:items-start">
+              {/* Logo visible on mobile only */}
+              <div className="flex lg:hidden">
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-full bg-[#ffabdd]/12 blur-[60px] scale-125" />
+                  <Image src="/logo.png" alt="Brizee Bri Luxe Hair Studio" width={160} height={160} className="object-contain drop-shadow-2xl relative" priority />
+                </div>
+              </div>
               <div>
                 <p className="font-cormorant italic text-[#ffabdd] text-xl tracking-wide mb-3">{heroTagline}</p>
                 <h1 className="font-cormorant font-bold text-white leading-none">
