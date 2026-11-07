@@ -224,16 +224,22 @@ export default function SettingsPage() {
 
       <Section title="Integrations" />
       <div className="space-y-2 mb-6">
-        <a
-          href="/api/auth/google"
-          className="flex items-center justify-between bg-white border border-[#ede9e5] rounded-xl px-4 py-3 hover:border-[#ffabdd]/50 transition-colors"
-        >
+        <div className="flex items-center justify-between bg-white border border-[#ede9e5] rounded-xl px-4 py-3">
           <div>
             <p className="text-sm font-medium text-[#1a1a1a]">Google Calendar + Gmail</p>
-            <p className="text-xs text-[#8a7f7a]">Connect your Google account</p>
+            <p className="text-xs text-[#8a7f7a]">
+              {s.google_connected === 'true'
+                ? 'Connected — emails & calendar syncing ✓'
+                : 'Not connected — emails will not send until you connect'}
+            </p>
           </div>
-          <span className="text-xs text-[#c4658f]">Connect →</span>
-        </a>
+          <a
+            href="/api/auth/google"
+            className={`text-xs font-medium whitespace-nowrap ${s.google_connected === 'true' ? 'text-[#b0a8a4]' : 'text-[#c4658f]'}`}
+          >
+            {s.google_connected === 'true' ? 'Reconnect →' : 'Connect →'}
+          </a>
+        </div>
         <div className="flex items-center justify-between bg-white border border-[#ede9e5] rounded-xl px-4 py-3">
           <div>
             <p className="text-sm font-medium text-[#1a1a1a]">Push Notifications</p>

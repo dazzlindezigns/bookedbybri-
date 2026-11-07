@@ -86,7 +86,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           )
         )
       }
-    } catch {}
+    } catch (e) { console.error('[email] confirmed:', e) }
   }
 
   // Deposit received (manual payment marked by Bri) — add to calendar + send ICS
@@ -107,7 +107,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           bookingDeclined(booking.client_name, serviceName, declineReason)
         )
       }
-    } catch {}
+    } catch (e) { console.error('[email] declined:', e) }
   }
 
   // Booking cancelled (by admin) — email client
@@ -123,7 +123,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           appointmentCancelled(booking.client_name, serviceName, dateStr, 'admin')
         )
       }
-    } catch {}
+    } catch (e) { console.error('[email] cancelled:', e) }
   }
 
   // Appointment completed — send Google review request
@@ -141,7 +141,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           reviewRequest(booking.client_name, serviceName, reviewRow.value)
         )
       }
-    } catch {}
+    } catch (e) { console.error('[email] completed:', e) }
   }
 
   return NextResponse.json(booking)

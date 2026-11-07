@@ -82,9 +82,13 @@ export async function sendGmail(
   const auth = await getAuthenticatedClient(refreshToken)
   const gmail = google.gmail({ version: 'v1', auth })
 
+  // Fetch the authenticated user's email so From header is valid RFC 5322
+  const profile = await gmail.users.getProfile({ userId: 'me' })
+  const fromEmail = profile.data.emailAddress || 'me'
+
   const message = [
     `To: ${to}`,
-    'From: Brizee Bri Luxe Hair Studio',
+    `From: Brizee Bri Luxe Hair Studio <${fromEmail}>`,
     'Content-Type: text/html; charset=utf-8',
     'MIME-Version: 1.0',
     `Subject: ${subject}`,
@@ -108,12 +112,15 @@ export async function sendGmailWithIcs(
   const auth = await getAuthenticatedClient(refreshToken)
   const gmail = google.gmail({ version: 'v1', auth })
 
+  const profile = await gmail.users.getProfile({ userId: 'me' })
+  const fromEmail = profile.data.emailAddress || 'me'
+
   const boundary = `BrizeeBri_${Date.now()}`
   const icsBase64 = Buffer.from(icsContent).toString('base64')
 
   const message = [
     `To: ${to}`,
-    'From: Brizee Bri Luxe Hair Studio',
+    `From: Brizee Bri Luxe Hair Studio <${fromEmail}>`,
     'MIME-Version: 1.0',
     `Subject: ${subject}`,
     `Content-Type: multipart/mixed; boundary="${boundary}"`,

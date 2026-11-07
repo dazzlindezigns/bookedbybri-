@@ -49,9 +49,7 @@ export async function POST(req: NextRequest) {
         .from('bookings')
         .update({ confirmation_sent_at: new Date().toISOString() })
         .eq('id', bookingId)
-    } catch {
-      // Non-critical
-    }
+    } catch (e) { console.error('[email] confirm send:', e) }
 
     try {
       const durationMin = service?.duration_minutes || 120
@@ -76,9 +74,7 @@ export async function POST(req: NextRequest) {
         .from('bookings')
         .update({ google_calendar_event_id: event.id })
         .eq('id', bookingId)
-    } catch {
-      // Calendar not critical
-    }
+    } catch (e) { console.error('[calendar] confirm event:', e) }
   }
 
   return NextResponse.json({ success: true })
