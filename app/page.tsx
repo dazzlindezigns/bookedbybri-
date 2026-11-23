@@ -225,12 +225,9 @@ export default async function HomePage() {
               >
                 Request an Appointment →
               </Link>
-              <p className="text-white/30 text-xs">
-                Don&apos;t see your style?{' '}
-                <Link href="/book" className="text-[#ffabdd] underline underline-offset-2 hover:text-white transition-colors">
-                  View all services on the booking page
-                </Link>
-              </p>
+              <Link href="/book" className="text-sm text-white/50 underline underline-offset-2 hover:text-[#ffabdd] transition-colors">
+                View All Services
+              </Link>
             </div>
           </div>
         </section>
