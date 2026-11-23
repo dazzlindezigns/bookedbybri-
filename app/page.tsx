@@ -32,7 +32,7 @@ async function getPolicies() {
 async function getServices() {
   try {
     const sb = createSupabaseAdminClient()
-    const { data } = await sb.from('services').select('*').order('display_order').limit(8)
+    const { data } = await sb.from('services').select('*').order('display_order')
     return data || []
   } catch { return [] }
 }
@@ -218,13 +218,19 @@ export default async function HomePage() {
                 </div>
               ))}
             </div>
-            <div className="text-center mt-10">
+            <div className="text-center mt-10 flex flex-col items-center gap-3">
               <Link
                 href="/book"
                 className="inline-block bg-[#ffabdd] text-[#1a1a1a] font-semibold px-8 py-3.5 rounded-full hover:bg-[#c4658f] hover:text-white transition-all duration-200"
               >
                 Request an Appointment →
               </Link>
+              <p className="text-white/30 text-xs">
+                Don&apos;t see your style?{' '}
+                <Link href="/book" className="text-[#ffabdd] underline underline-offset-2 hover:text-white transition-colors">
+                  View all services on the booking page
+                </Link>
+              </p>
             </div>
           </div>
         </section>
