@@ -101,6 +101,7 @@ export default function BookPage() {
       formData.append('client_notes', [styleDetails, clientNotes].filter(Boolean).join('\n\n'))
       formData.append('payment_method', paymentMethod)
       formData.append('deposit_amount', String(depositAmount))
+      formData.append('sms_consent', smsConsent ? 'true' : 'false')
       inspoFiles.forEach((f) => formData.append('images', f))
 
       const res = await fetch('/api/bookings', { method: 'POST', body: formData })

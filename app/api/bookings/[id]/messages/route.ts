@@ -28,19 +28,17 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Send SMS to client's phone if Telnyx is configured
+  // Send SMS only if client opted in
   try {
     const { data: booking } = await sb
       .from('bookings')
-      .select('client_phone')
+      .select('client_phone, sms_consent')
       .eq('id', params.id)
       .single()
-    if (booking?.client_phone) {
+    if (booking?.client_phone && booking.sms_consent) {
       await sendSms(booking.client_phone, body.trim())
     }
-  } catch {
-    // SMS failure doesn't block the message from saving
-  }
+  } catch (e) { console.error('[sms] booking message:', e) }
 
   return NextResponse.json(data)
 }

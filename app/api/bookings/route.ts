@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
   const client_notes = formData.get('client_notes') as string
   const payment_method = formData.get('payment_method') as string
   const deposit_amount = parseFloat(formData.get('deposit_amount') as string)
+  const sms_consent = formData.get('sms_consent') === 'true'
   const images = formData.getAll('images') as File[]
 
   const { data: booking, error } = await sb
@@ -51,6 +52,7 @@ export async function POST(req: NextRequest) {
       payment_method: payment_method as 'stripe' | 'cashapp' | 'zelle' | 'applepay',
       payment_status: payment_method === 'stripe' ? 'deposit_paid' : 'unpaid',
       deposit_amount,
+      sms_consent,
       status: 'pending',
       final_price: null,
     })
