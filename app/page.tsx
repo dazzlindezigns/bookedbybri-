@@ -32,7 +32,7 @@ async function getPolicies() {
 async function getServices() {
   try {
     const sb = createSupabaseAdminClient()
-    const { data } = await sb.from('services').select('*').order('display_order')
+    const { data } = await sb.from('services').select('*').order('display_order').limit(6)
     return data || []
   } catch { return [] }
 }
@@ -179,7 +179,7 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="font-cormorant text-4xl lg:text-5xl font-semibold text-white mb-3">Signature Services</h2>
-              <p className="text-white/40 text-sm">Custom looks for every queen.</p>
+              <p className="text-white/40 text-sm">Premium styles for everyone.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {services.map((svc: { id: string; name: string; description: string | null; base_price: number | null; duration_minutes: number; hair_included: boolean }) => (
