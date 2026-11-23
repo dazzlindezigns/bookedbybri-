@@ -120,7 +120,7 @@ export default function BookPage() {
   const canProceed = () => {
     if (step === 1) return !!selectedService
     if (step === 2) return !!selectedDate && !!selectedTime
-    if (step === 3) return clientName && clientEmail && clientPhone && smsConsent
+    if (step === 3) return clientName && clientEmail && clientPhone
     if (step === 4) return !selectedService?.requires_consultation || inspoFiles.length > 0
     if (step === 5) return !!paymentMethod
     return false
@@ -353,7 +353,7 @@ export default function BookPage() {
                   className="mt-0.5 w-4 h-4 accent-[#c4658f] flex-shrink-0 cursor-pointer"
                 />
                 <label htmlFor="smsConsent" className="text-xs text-[#92400e] leading-relaxed cursor-pointer">
-                  By providing my phone number, I agree to receive appointment-related text messages from Brizee Bri Luxe Hair Studio. Reply STOP to opt out. Msg & data rates may apply.{' '}
+                  <span className="font-semibold">Optional:</span> I agree to receive appointment-related text messages from Brizee Bri Luxe Hair Studio. Reply STOP to opt out. Msg & data rates may apply.{' '}
                   <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline font-medium">Privacy Policy</a>
                   {' & '}
                   <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline font-medium">Terms</a>.
